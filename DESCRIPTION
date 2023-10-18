@@ -4,8 +4,15 @@ Title: Simulating the STate, effoRt, Identification/DEtection and Reporting of B
 Version: 0.0.1
 Author: Simon Rolph
 Maintainer: Simon Rolph <simrol@ceh.ac.uk>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Description: An R package to simulate biodiversity data for testing model performance
+License: TBC
 Encoding: UTF-8
 LazyData: true
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 7.2.3
+Imports:
+    terra,
+    sf

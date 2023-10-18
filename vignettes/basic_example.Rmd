@@ -1,0 +1,79 @@
+---
+title: "A minimal example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{A minimal example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This is a basic example of how this package works.
+
+```{r setup}
+library(STRIDER)
+library(terra)
+library(sf)
+
+#set a seed so it's reproducible
+set.seed(42)
+```
+
+First we create a background SpatRaster from which to use the extent, resolution, and CRS.
+
+```{r state}
+# create background
+background <- rast(matrix(0,1000,1000))
+
+#simulate a uniform state of the target across the background
+state <- sim_state_uniform(background,42)
+
+#plot the state
+plot(state)
+```
+
+Next we simulate effort across the landscape
+
+```{r effort}
+#simulate effort across the landscape
+effort <- sim_effort_uniform(state,n_visits=100,replace=F)
+
+#add the sampled locations to the plot
+plot(effort$geometry)
+```
+
+Next we simulate detections and identifications
+
+```{r detections}
+#simulate detection and identification
+detections <-sim_detect_equal(state,effort,prob=0.5)
+
+#plot the non-detections
+plot(detections$geometry[detections$detected==F],col="red",pch=4)
+
+```
+
+We then simulate whether these detections make are reported
+
+```{r reporting}
+# simulate reporting
+reports <- sim_report_equal(state,detections,prob=0.8,platform="iRecord")
+
+# colour reported records to yellow
+plot(reports$geometry[reports$reported],col="yellow")
+```
+
+And we're done. let's have a look at all the objects we have created
+
+```{r review}
+print(state)
+print(effort)
+print(detections)
+print(reports)
+```
