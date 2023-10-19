@@ -35,46 +35,87 @@ remotes::install_github("BiologicalRecordsCentre/STRIDER")
 ## How to use the R package
 
 For each of the 4 processes there are choices of functions to use depending on your need. For each the processes there is the most basic version for demonstration purposes.
+
+There are no species STRIDER R objects, this is intentional as to allow flexibility ad interoperability. The outputs at each step are `terra` SpatRasters or `sf` feature collections (POINT), so if you can use custom R scripts to generate the outputs of any of the steps. You can verify whether the object is in the correct format using the `verify_` functions:
+
+ * `verify_state(x)`
+ * `verify_effort(x)`
+ * `verify_detect(x)`
+ * `verify_report(x)`
+ 
+You could use the `targets` R package to create reproducible workflows for simulating your data.
  
 ## Simulating state
 
-All functions for simulating state start with `sim_state_`
- 
-```
-sim_state_uniform() # a uniform true state
-```
+States are represented as rasters (`SpatRaster`) with any resolution, extent or CRS (or no CRS). We simulate the state of the environment and 'target' separately. The state simulation functions take a raster which is refereed to as the 'background', the resolution, extent and CRS is inheritated from this when simulating the state.
 
-This package is designed to be compatable with 
+### Simulating the environmental state
 
- * rangeshiftR
- * virtualspecies
+Here we want to represent the state of the environment. Essentially we need to capture variables (real or abstract) which influence where the target might exist, and where the effort might be allocated. This might include:
+
+ * Physical features like altitude or slope
+ * Climatic variable such as rainfall or temperature
+ * Effort-impacting variables such as human population, focal points (e.g. nature reserves) or access features (footpaths).
+
+The output of this stage is a SpatRaster with layers for each environmental variable. If you want the environmental variables to change over time then create a list of rasters where each list item represents the environmental state at each time step.
+
+All functions for simulating environmental state start with `sim_state_env_`
+
+The minimal version of this function is `sim_state_env_uniform()` which produces a raster with a single layer which is uniform in value in space.
+
+### Simulating the target state
+
+Here we want to represent the target's 'intensity' in space as a raster. We can realise this as 'abundance'. This might be dependant on the simulated environmental state if that is relevant to your research question.
+
+The output of this stage is a SpatRaster with layers for each target. If you want the target to change over time then create a list of rasters where each list item represents the target state at each time step.
+
+All functions for simulating target state start with `sim_state_target_`
+
+The minimal version of this function is `sim_state_target_uniform()` which produces a uniform abundance across space.
+
+You could also use other packages to generate a target state (eg.rangeshiftR, virtualspecies) then convert the output to a `SpatRaster` in the same format as the STRIDER `sim_state_target_` functions.
  
 ## Simulating effort
 
 All functions for simulating effort start with `sim_effort_`
  
-```
-sim_effort_uniform() #effort is uniformly distributed across the landscape
-```
+The minimal function for this process is `sim_effort_uniform()` in which effort is uniformly distributed across the landscape.
+
+`sim_effort_weighted()` can be used to sample from the target state but weighted unequally across the environment (a weighting layer is provided as a SpatRaster)
+
+`sim_effort_points()` can be used to sample but using specified locations (as provided as a simple features POINT collection)
+
+`sim_effort_agent()` can be used to sample using an agent based approach (not sure how this will be specified yet)
 
 ## Simulating identification/detection
 
-```
-sim_detect_equal() # all species are detected at equal probability
-```
+The minimal function for this process is `sim_detect_equal()` in which all targets are detected at equal probability.
 
 ## Simulating the reporting
 
-```
-sim_report_equal() # all data is reported at equal probability
-```
-
+The minimal function for this process is `sim_report_equal()` in which all data is reported at equal probability.
 
 ## Demonstration of using simulated data to validate a model approach
 
 Here we fit a very simple model using the simulated data
 
-```
-mod1 <- lm(simulated_data, ...)
-plot(mod1)
+```{r example}
+library(STRIDER)
+library(terra)
+library(sf)
+
+background <- terra::rast(matrix(0,1000,1000)) # create background
+state_env <- sim_state_env_uniform(background) #environment
+state_target <- sim_state_target_uniform(background,42) #target
+effort <- sim_effort_uniform(state_target,n_visits=100,replace=F) #effort
+detections <-sim_detect_equal(state_target,effort,prob=0.5) #detection
+reports <- sim_report_equal(state_target,detections,prob=0.8,platform="iRecord") #reports
+
+plot(state_target) #state of target
+plot(effort$geometry,add=T) #effort
+plot(detections$geometry[detections$detected==F],col="red",pch=4) #highlight the non-detections
+plot(reports$geometry[reports$reported],col="yellow") # highlight reported records as yellow
+
+#mod1 <- lm(simulated_data, ...)
+#plot(mod1)
 ```
