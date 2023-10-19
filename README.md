@@ -160,21 +160,11 @@ reports <- sim_report_equal(state_target,detections,prob=0.8,platform="iRecord")
 
 plot(state_target) #state of target
 plot(effort$geometry,add=T) #effort
+plot(detections$geometry[detections$detected==F],col="red",pch=4,add=T) #highlight the non-detections
+plot(reports$geometry[reports$reported],col="yellow",add=T) # highlight reported records as yellow
 ```
 
 ![](README_files/figure-gfm/example-1.png)<!-- -->
-
-``` r
-plot(detections$geometry[detections$detected==F],col="red",pch=4) #highlight the non-detections
-```
-
-![](README_files/figure-gfm/example-2.png)<!-- -->
-
-``` r
-plot(reports$geometry[reports$reported],col="yellow") # highlight reported records as yellow
-```
-
-![](README_files/figure-gfm/example-3.png)<!-- -->
 
 ``` r
 #mod1 <- lm(simulated_data, ...)
