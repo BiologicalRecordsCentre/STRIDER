@@ -8,8 +8,8 @@ subsequent sampling and reporting. It’s primary use is for simulating
 citizen science data to validate method development. The simulation is
 split into 4 processes:
 
-- State: what is the true state of the simulated reality? (where are the
-  species? what is the environment like?)
+- State: what is the true state of the simulated reality? This is split
+  into the environment and the target (e.g. species)
 - Effort: how is sampling effort allocated? (where/what/when are they
   sampling? who is doing the sampling?)
 - Identification/Detection: what happens when the sampler meets the
@@ -17,6 +17,13 @@ split into 4 processes:
   identified?)
 - Reporting: how is the interaction reported? (is the species recorded?
   Are absences recorded? At what spatial resolution is it reported at?)
+
+<figure>
+<img src="diagrams/overview.drawio.svg"
+alt="Overview diagram of STRIDER package" />
+<figcaption aria-hidden="true">Overview diagram of STRIDER
+package</figcaption>
+</figure>
 
 ## Installation
 

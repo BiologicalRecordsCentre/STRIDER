@@ -1,0 +1,96 @@
+---
+title: "A minimal example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{A minimal example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This is a slightly more complex example of how this package works.
+
+```{r setup}
+library(STRIDER)
+library(terra)
+library(sf)
+
+library(NLMR)
+library(virtualspecies)
+
+#set a seed so it's reproducible
+set.seed(42)
+```
+
+First we create a background SpatRaster from which to use the extent, resolution, and CRS.
+
+```{r state}
+# create background
+background <- rast(matrix(0,1000,1000))
+
+#simulate a uniform state of the environment across the background (although in this example we don't actually use it)
+state_env <- sim_state_env_NLMR(background,
+                          c("mpd","mpd","mpd","random"),
+                           list(
+                             list(roughness=0.5),
+                             list(roughness=0.6),
+                             list(roughness=0.8),
+                             list()
+                             )
+                           )
+
+plot(sim_state_env)
+
+#simulate a uniform state of the target across the background
+state_target <- sim_state_target_virtualspecies(background,state_env,n_targets = 3)
+
+#plot the state
+plot(state_target)
+```
+
+Next we simulate effort across the landscape
+
+```{r effort}
+#simulate effort across the landscape
+effort <- sim_effort_uniform(state_target,n_visits=100,replace=F)
+
+#add the sampled locations to the plot
+plot(effort$geometry)
+```
+
+Next we simulate detections and identifications
+
+```{r detections}
+#simulate detection and identification
+detections <-sim_detect_equal(state_target,effort,prob=0.5)
+
+#plot the non-detections
+plot(detections$geometry[detections$detected==F],col="red",pch=4)
+
+```
+
+We then simulate whether these detections made are reported
+
+```{r reporting}
+# simulate reporting
+reports <- sim_report_equal(state_target,detections,prob=0.8,platform="iRecord")
+
+# colour reported records to yellow
+plot(reports$geometry[reports$reported],col="yellow")
+```
+
+And we're done. let's have a look at all the objects we have created
+
+```{r review}
+print(state_env)
+print(state_target)
+print(effort)
+print(detections)
+print(reports)
+```

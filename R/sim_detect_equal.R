@@ -7,11 +7,18 @@
 #' @examples
 #' sim_detect_equal()
 sim_detect_equal <- function(sim_state,sim_effort,prob=1){
-  detections <- sim_effort
-  detections$state <- terra::extract(sim_state,sim_effort)$abundance
+  detections_all <- data.frame()
 
-  detections$detected <- runif(nrow(detections)) < prob
-  detections$identified <- TRUE
+  for (i in 1:dim(sim_state)[3]){
+    detections <- sim_effort
+    detections$state <- terra::extract(sim_state[[i]],sim_effort)$abundance
+    detections$target <- i
 
-  detections
+    detections$detected <- runif(nrow(detections)) < prob
+    detections$identified <- TRUE
+
+    detections_all <- rbind(detections_all,detections)
+  }
+
+  detections_all
 }
