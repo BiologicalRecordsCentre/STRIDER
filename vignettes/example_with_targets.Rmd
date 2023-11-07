@@ -1,0 +1,26 @@
+---
+title: "An example of STRIDER using R package targets"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{An example with targets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This is a basic example of how this package works.
+
+```{r setup}
+library(STRIDER)
+library(terra)
+library(sf)
+
+#set a seed so it's reproducible
+set.seed(42)
+```

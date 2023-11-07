@@ -19,3 +19,8 @@ A SpatRaster with extent and resolution of background but values  describing the
 \description{
 Simulates a state of the environment using a wrapper around NLMR functions
 }
+\examples{
+\dontrun{
+sim_state_env_NLMR(terra::rast(nrows=100,ncols=100),"random")
+}
+}

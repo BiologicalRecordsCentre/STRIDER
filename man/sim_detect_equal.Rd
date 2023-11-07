@@ -4,12 +4,16 @@
 \alias{sim_detect_equal}
 \title{Simulates detection where all detections occur at an equal probability and identified correctly}
 \usage{
-sim_detect_equal(sim_state, sim_effort, prob = 1)
+sim_detect_equal(background, state_env, state_target, effort, prob = 1)
 }
 \arguments{
-\item{sim_state}{a SpatRaster for the true state to be detected from,and from which the extent and resolution will be used}
+\item{background}{the background}
 
-\item{sim_effort}{a sf of sampled points}
+\item{state_env}{description}
+
+\item{state_target}{a SpatRaster for the true state to be detected from,and from which the extent and resolution will be used}
+
+\item{effort}{a sf of sampled points}
 
 \item{prob}{a numeric probability of each target being detected}
 }
@@ -20,5 +24,7 @@ A simple feature collection with geometry type POINTs
 Simulates detection where all detections occur at an equal probability and identified correctly
 }
 \examples{
+\dontrun{
 sim_detect_equal()
+}
 }

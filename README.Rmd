@@ -14,7 +14,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 STRIDER is an R package for simulating virtual species and the subsequent sampling and reporting. It's primary use is for simulating citizen science data to validate method development. The simulation is split into 4 processes:
 
- * State: what is the true state of the simulated reality? This is split into the environment and the target (e.g. species)
+ * State: what is the true state of the simulated reality?
+     * Environment (e.g abiotic and biotic)
+     * Target (e.g. species) what may be dependant on the environment
  * Effort: how is sampling effort allocated? (where/what/when are they sampling? who is doing the sampling?)
  * Identification/Detection: what happens when the sampler meets the species (is the species detected? is the species correctly identified?)
  * Reporting: how is the interaction reported? (is the species recorded? Are absences recorded? At what spatial resolution is it reported at?)
@@ -37,7 +39,7 @@ remotes::install_github("BiologicalRecordsCentre/STRIDER")
 
 For each of the 5 processes there are choices of functions to use depending on your need. For each the processes there is the most basic version for demonstration purposes.
 
-The functions all follow this basic schema whereby all the objects from the previous stage are arguments in the subsequent functions, whether or not they are actually used in the function:
+The functions all follow this basic schema whereby all the objects from the previous stage are arguments in the subsequent functions, whether or not they are actually used in the calculations within the function:
 
  * `state_env    <- sim_state_env_______(background)`
  * `state_target <- sim_state_target____(background, state_env, ...)`
@@ -51,7 +53,7 @@ You could use the `targets` R package to create reproducible workflows for simul
  
 ## Simulating state
 
-States are represented as rasters (`SpatRaster`) with any resolution, extent or CRS (or no CRS). We simulate the state of the environment and 'target' separately. The state simulation functions take a raster which is refereed to as the 'background', the resolution, extent and CRS is inheritated from this when simulating the state.
+States are represented as rasters (`SpatRaster`) with any resolution, extent or CRS (or no CRS). We simulate the state of the environment and 'target' separately. The state simulation functions take a raster which is refereed to as the 'background', the resolution, extent and CRS is inherited from this when simulating the state.
 
 ### Simulating the environmental state
 
@@ -108,18 +110,16 @@ library(STRIDER)
 library(terra)
 library(sf)
 
-background <- terra::rast(matrix(0,1000,1000)) # create background
-state_env <- sim_state_env_uniform(background) #environment
-state_target <- sim_state_target_uniform(background,42) #target
-effort <- sim_effort_uniform(state_target,n_visits=100,replace=F) #effort
-detections <-sim_detect_equal(state_target,effort,prob=0.5) #detection
-reports <- sim_report_equal(state_target,detections,prob=0.8,platform="iRecord") #reports
+background <- terra::rast(matrix(0,1000,600)) # create background
+state_env <- sim_state_env_gradient(background) #environment
+state_target <- sim_state_target_uniform(background,state_env,42) #target
+effort <- sim_effort_uniform(background,state_env,state_target,n_visits=100,replace=F) #effort
+detections <-sim_detect_equal(background,state_env,state_target,effort,prob=0.5) #detection
+reports <- sim_report_equal(background,state_env,state_target,effort,detections,prob=0.8,platform="iRecord") #reports
 
 plot(state_target) #state of target
 plot(effort$geometry,add=T) #effort
 plot(detections$geometry[detections$detected==F],col="red",pch=4,add=T) #highlight the non-detections
 plot(reports$geometry[reports$reported],col="yellow",add=T) # highlight reported records as yellow
 
-#mod1 <- lm(simulated_data, ...)
-#plot(mod1)
 ```

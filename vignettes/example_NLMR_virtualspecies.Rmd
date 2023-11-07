@@ -1,8 +1,8 @@
 ---
-title: "An example with virtual species and NLMR"
+title: "An example with virtualspecies and NLMR"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{A minimal example}
+  %\VignetteIndexEntry{An example with virtualspecies and NLMR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

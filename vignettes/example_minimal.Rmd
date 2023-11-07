@@ -31,11 +31,11 @@ First we create a background SpatRaster from which to use the extent, resolution
 # create background
 background <- rast(matrix(0,1000,1000))
 
-#simulate a uniform state of the environment across the background (although in this example we don't actually use it)
+#simulate a uniform state of the environment across the background
 state_env <- sim_state_env_uniform(background)
 
 #simulate a uniform state of the target across the background
-state_target <- sim_state_target_uniform(background,42)
+state_target <- sim_state_target_uniform(background,state_env,42)
 
 #plot the state
 plot(state_target)
@@ -45,7 +45,7 @@ Next we simulate effort across the landscape
 
 ```{r effort}
 #simulate effort across the landscape
-effort <- sim_effort_uniform(state_target,n_visits=100,replace=F)
+effort <- sim_effort_uniform(background, state_env, state_target, n_visits=100,replace=F)
 
 #add the sampled locations to the plot
 plot(effort$geometry)
@@ -55,7 +55,7 @@ Next we simulate detections and identifications
 
 ```{r detections}
 #simulate detection and identification
-detections <-sim_detect_equal(state_target,effort,prob=0.5)
+detections <-sim_detect_equal(background, state_env, state_target, effort,prob=0.5)
 
 #plot the non-detections
 plot(detections$geometry[detections$detected==F],col="red",pch=4)
@@ -66,7 +66,7 @@ We then simulate whether these detections make are reported
 
 ```{r reporting}
 # simulate reporting
-reports <- sim_report_equal(state_target,detections,prob=0.8,platform="iRecord")
+reports <- sim_report_equal(background, state_env, state_target, effort,detections,prob=0.8,platform="iRecord")
 
 # colour reported records to yellow
 plot(reports$geometry[reports$reported],col="yellow")

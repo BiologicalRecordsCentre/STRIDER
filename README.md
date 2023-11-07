@@ -18,12 +18,7 @@ split into 4 processes:
 - Reporting: how is the interaction reported? (is the species recorded?
   Are absences recorded? At what spatial resolution is it reported at?)
 
-<figure>
-<img src="diagrams/overview.drawio.svg"
-alt="Overview diagram of STRIDER package" />
-<figcaption aria-hidden="true">Overview diagram of STRIDER
-package</figcaption>
-</figure>
+![](diagrams/overview.drawio.svg)
 
 ## Installation
 
@@ -37,21 +32,25 @@ Install from GitHub
 
 ## How to use the R package
 
-For each of the 4 processes there are choices of functions to use
+For each of the 5 processes there are choices of functions to use
 depending on your need. For each the processes there is the most basic
 version for demonstration purposes.
 
+The functions all follow this basic schema whereby all the objects from
+the previous stage are arguments in the subsequent functions, whether or
+not they are actually used in the function:
+
+- `state_env    <- sim_state_env_______(background)`
+- `state_target <- sim_state_target____(background, state_env, ...)`
+- `effort       <- sim_effort__________(background, state_env, state_target, ...)`
+- `detect       <- sim_detect__________(background, state_env, state_target, effort, ...)`
+- `report       <- sim_detect__________(background, state_env, state_target, effort, detect, ...)`
+
 There are no species STRIDER R objects, this is intentional as to allow
 flexibility ad interoperability. The outputs at each step are `terra`
-SpatRasters or `sf` feature collections (POINT), so if you can use
-custom R scripts to generate the outputs of any of the steps. You can
-verify whether the object is in the correct format using the `verify_`
-functions:
-
-- `verify_state(x)`
-- `verify_effort(x)`
-- `verify_detect(x)`
-- `verify_report(x)`
+SpatRasters or `sf` feature collections (POINT) see figure above, so if
+you can use custom R scripts to generate the outputs of any of the
+steps.
 
 You could use the `targets` R package to create reproducible workflows
 for simulating your data.
@@ -160,10 +159,10 @@ library(sf)
 ``` r
 background <- terra::rast(matrix(0,1000,1000)) # create background
 state_env <- sim_state_env_uniform(background) #environment
-state_target <- sim_state_target_uniform(background,42) #target
-effort <- sim_effort_uniform(state_target,n_visits=100,replace=F) #effort
-detections <-sim_detect_equal(state_target,effort,prob=0.5) #detection
-reports <- sim_report_equal(state_target,detections,prob=0.8,platform="iRecord") #reports
+state_target <- sim_state_target_uniform(background,state_env,42) #target
+effort <- sim_effort_uniform(background,state_env,state_target,n_visits=100,replace=F) #effort
+detections <-sim_detect_equal(background,state_env,state_target,effort,prob=0.5) #detection
+reports <- sim_report_equal(background,state_env,state_target,effort,detections,prob=0.8,platform="iRecord") #reports
 
 plot(state_target) #state of target
 plot(effort$geometry,add=T) #effort

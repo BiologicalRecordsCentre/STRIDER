@@ -4,10 +4,20 @@
 \alias{sim_effort_uniform}
 \title{Simulates a uniform effort}
 \usage{
-sim_effort_uniform(sim_state, n_visits = 100, replace = F)
+sim_effort_uniform(
+  background,
+  state_env,
+  state_target,
+  n_visits = 100,
+  replace = F
+)
 }
 \arguments{
-\item{sim_state}{a SpatRaster from which the extent and resolution will be used}
+\item{background}{the background}
+
+\item{state_env}{description}
+
+\item{state_target}{a SpatRaster from which the extent and resolution will be used}
 
 \item{n_visits}{a number indicating the average number of visits}
 
@@ -20,5 +30,7 @@ A simple feature collection with geometry type POINTs
 Simulates a uniform effort
 }
 \examples{
+\dontrun{
 sim_effort_uniform(state,100,T)
+}
 }

@@ -4,6 +4,10 @@
 #' @param alg single or list of algorithms as character
 #' @param params list of vectors providing parameters to be passed to each NMLR function call
 #' @return A SpatRaster with extent and resolution of background but values  describing the environment
+#' @examples
+#' \dontrun{
+#' sim_state_env_NLMR(terra::rast(nrows=100,ncols=100),"random")
+#' }
 sim_state_env_NLMR <- function(background,alg,params=NULL){
 
   #check if NLMR is installed and available
@@ -54,13 +58,12 @@ sim_state_env_NLMR <- function(background,alg,params=NULL){
   }
 
   layers <- terra::rast(layers)
+  names(layers) <- paste0(names(layers),"_",1:length(names(layers)))
 
   terra::crs(layers) <- terra::crs(background)
 
-
   #unload package
   detach("package:NLMR", unload = TRUE)
-
 
   layers
 }

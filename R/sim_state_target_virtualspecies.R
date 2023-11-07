@@ -2,6 +2,8 @@
 #'
 #' @param background a SpatRaster from which the extent and resolution will be used
 #' @param environment a SpatRaster from which the extent and resolution will be used
+#' @param n_targets numeric for the number of targets to generate
+#' @param prop_env numeric between 0 and 1 for proportion of environmental variables to be randomly used for each virtual species
 #' @param params list of vectors providing parameters to be passed to each NMLR function call
 #' @return A SpatRaster with extent and resolution of background but values  describing the environment
 sim_state_target_virtualspecies <- function(background,environment,n_targets=1,prop_env=1,params=NULL){

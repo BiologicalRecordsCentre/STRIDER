@@ -13,7 +13,7 @@ test_that("Test creating a uniform environment", {
 
 
 #simulate a uniform state of the target across the background
-state_target <- sim_state_target_uniform(background,42)
+state_target <- sim_state_target_uniform(background,state_env,42)
 
 test_that("Creating a uniform target distribution", {
   expect_true(is(state_target, "SpatRaster"))
@@ -22,7 +22,7 @@ test_that("Creating a uniform target distribution", {
 
 
 #simulate effort across the landscape
-effort <- sim_effort_uniform(state_target,n_visits=100,replace=F)
+effort <- sim_effort_uniform(background,state_env,state_target,n_visits=100,replace=F)
 
 test_that("Simulating effort across the landscape", {
   expect_true(is(effort, "sf"))
@@ -31,7 +31,7 @@ test_that("Simulating effort across the landscape", {
 
 
 # simulate detection
-detections <-sim_detect_equal(state_target,effort,prob=0.5)
+detections <-sim_detect_equal(background,state_env,state_target,effort,prob=0.5)
 
 test_that("Simulating detection", {
   expect_true(is(detections, "sf"))
@@ -39,7 +39,7 @@ test_that("Simulating detection", {
 })
 
 # simulate reporting
-reports <- sim_report_equal(state_target,detections,prob=0.8,platform="iRecord")
+reports <- sim_report_equal(background,state_env,state_target,effort,detections,prob=0.8,platform="iRecord")
 
 test_that("Simulating reporting", {
   expect_true(is(reports, "sf"))

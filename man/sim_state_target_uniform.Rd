@@ -4,10 +4,12 @@
 \alias{sim_state_target_uniform}
 \title{Simulates a uniform state of the target}
 \usage{
-sim_state_target_uniform(background, abundance = 10)
+sim_state_target_uniform(background, state_env = NULL, abundance = 10)
 }
 \arguments{
 \item{background}{a SpatRaster from which the extent and resolution will be used}
+
+\item{state_env}{a SpatRaster for the environmental sate}
 
 \item{abundance}{a number indicating the abundance of the target in each cell}
 }
@@ -18,5 +20,7 @@ A SpatRaster with extent and resolution of background but values from abundance
 Simulates a uniform state of the target
 }
 \examples{
-sim_state_target_uniform(terra::rast(nrows=100,ncols=100),42)
+\dontrun{
+sim_state_target_uniform(background = terra::rast(nrows=100,ncols=100),abundance = 42)
+}
 }
