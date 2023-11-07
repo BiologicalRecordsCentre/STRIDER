@@ -22,12 +22,12 @@ library(terra)
 library(sf)
 
 #installed as not dependencies for STRIDER
-install.packages("remotes")
+install.packages("remotes", repos='http://cran.us.r-project.org')
 remotes::install_github("cran/RandomFieldsUtils")
 remotes::install_github("cran/RandomFields")
 remotes::install_github("ropensci/NLMR")
 
-install.packages("virtualspecies")
+install.packages("virtualspecies", repos='http://cran.us.r-project.org')
 
 library(NLMR)
 library(virtualspecies)
