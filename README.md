@@ -8,8 +8,9 @@ subsequent sampling and reporting. It’s primary use is for simulating
 citizen science data to validate method development. The simulation is
 split into 4 processes:
 
-- State: what is the true state of the simulated reality? This is split
-  into the environment and the target (e.g. species)
+- State: what is the true state of the simulated reality?
+  - Environment (e.g abiotic and biotic)
+  - Target (e.g. species) what may be dependant on the environment
 - Effort: how is sampling effort allocated? (where/what/when are they
   sampling? who is doing the sampling?)
 - Identification/Detection: what happens when the sampler meets the
@@ -38,7 +39,7 @@ version for demonstration purposes.
 
 The functions all follow this basic schema whereby all the objects from
 the previous stage are arguments in the subsequent functions, whether or
-not they are actually used in the function:
+not they are actually used in the calculations within the function:
 
 - `state_env    <- sim_state_env_______(background)`
 - `state_target <- sim_state_target____(background, state_env, ...)`
@@ -61,7 +62,7 @@ States are represented as rasters (`SpatRaster`) with any resolution,
 extent or CRS (or no CRS). We simulate the state of the environment and
 ‘target’ separately. The state simulation functions take a raster which
 is refereed to as the ‘background’, the resolution, extent and CRS is
-inheritated from this when simulating the state.
+inherited from this when simulating the state.
 
 ### Simulating the environmental state
 
@@ -157,8 +158,8 @@ library(sf)
     ## Linking to GEOS 3.9.3, GDAL 3.5.2, PROJ 8.2.1; sf_use_s2() is TRUE
 
 ``` r
-background <- terra::rast(matrix(0,1000,1000)) # create background
-state_env <- sim_state_env_uniform(background) #environment
+background <- terra::rast(matrix(0,1000,600)) # create background
+state_env <- sim_state_env_gradient(background) #environment
 state_target <- sim_state_target_uniform(background,state_env,42) #target
 effort <- sim_effort_uniform(background,state_env,state_target,n_visits=100,replace=F) #effort
 detections <-sim_detect_equal(background,state_env,state_target,effort,prob=0.5) #detection
@@ -171,8 +172,3 @@ plot(reports$geometry[reports$reported],col="yellow",add=T) # highlight reported
 ```
 
 ![](README_files/figure-gfm/example-1.png)<!-- -->
-
-``` r
-#mod1 <- lm(simulated_data, ...)
-#plot(mod1)
-```
