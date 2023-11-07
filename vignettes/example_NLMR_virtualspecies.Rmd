@@ -1,5 +1,5 @@
 ---
-title: "A minimal example"
+title: "An example with virtual species and NLMR"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{A minimal example}
@@ -16,18 +16,10 @@ knitr::opts_chunk$set(
 
 This is a slightly more complex example of how this package works.
 
-```{r setup}
+```{r setup, eval = F}
 library(STRIDER)
 library(terra)
 library(sf)
-
-#installed as not dependencies for STRIDER
-install.packages("remotes", repos='http://cran.us.r-project.org')
-remotes::install_github("cran/RandomFieldsUtils")
-remotes::install_github("cran/RandomFields")
-remotes::install_github("ropensci/NLMR")
-
-install.packages("virtualspecies", repos='http://cran.us.r-project.org')
 
 library(NLMR)
 library(virtualspecies)
@@ -38,7 +30,7 @@ set.seed(42)
 
 First we create a background SpatRaster from which to use the extent, resolution, and CRS.
 
-```{r state}
+```{r state, eval = F}
 # create background
 background <- rast(matrix(0,1000,1000))
 
@@ -64,7 +56,7 @@ plot(state_target)
 
 Next we simulate effort across the landscape
 
-```{r effort}
+```{r effort, eval = F}
 #simulate effort across the landscape
 effort <- sim_effort_uniform(state_target,n_visits=100,replace=F)
 
@@ -74,7 +66,7 @@ plot(effort$geometry)
 
 Next we simulate detections and identifications
 
-```{r detections}
+```{r detections, eval = F}
 #simulate detection and identification
 detections <-sim_detect_equal(state_target,effort,prob=0.5)
 
@@ -85,7 +77,7 @@ plot(detections$geometry[detections$detected==F],col="red",pch=4)
 
 We then simulate whether these detections made are reported
 
-```{r reporting}
+```{r reporting, eval = F}
 # simulate reporting
 reports <- sim_report_equal(state_target,detections,prob=0.8,platform="iRecord")
 
@@ -95,7 +87,7 @@ plot(reports$geometry[reports$reported],col="yellow")
 
 And we're done. let's have a look at all the objects we have created
 
-```{r review}
+```{r review, eval = F}
 print(state_env)
 print(state_target)
 print(effort)
