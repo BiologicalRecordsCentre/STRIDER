@@ -19,7 +19,7 @@ STRIDER is an R package for simulating virtual species and the subsequent sampli
  * Identification/Detection: what happens when the sampler meets the species (is the species detected? is the species correctly identified?)
  * Reporting: how is the interaction reported? (is the species recorded? Are absences recorded? At what spatial resolution is it reported at?)
  
-![Overview diagram of STRIDER package](diagrams/overview.drawio.svg)
+![](diagrams/overview.drawio.svg)
  
 ## Installation
 
@@ -33,17 +33,19 @@ remotes::install_github("BiologicalRecordsCentre/STRIDER")
 
 `terra`, `sf`
 
-
 ## How to use the R package
 
-For each of the 4 processes there are choices of functions to use depending on your need. For each the processes there is the most basic version for demonstration purposes.
+For each of the 5 processes there are choices of functions to use depending on your need. For each the processes there is the most basic version for demonstration purposes.
 
-There are no species STRIDER R objects, this is intentional as to allow flexibility ad interoperability. The outputs at each step are `terra` SpatRasters or `sf` feature collections (POINT), so if you can use custom R scripts to generate the outputs of any of the steps. You can verify whether the object is in the correct format using the `verify_` functions:
+The functions all follow this basic schema whereby all the objects from the previous stage are arguments in the subsequent functions, whether or not they are actually used in the function:
 
- * `verify_state(x)`
- * `verify_effort(x)`
- * `verify_detect(x)`
- * `verify_report(x)`
+ * `state_env    <- sim_state_env_______(background)`
+ * `state_target <- sim_state_target____(background, state_env, ...)`
+ * `effort       <- sim_effort__________(background, state_env, state_target, ...)`
+ * `detect       <- sim_detect__________(background, state_env, state_target, effort, ...)`
+ * `report       <- sim_detect__________(background, state_env, state_target, effort, detect, ...)`
+
+There are no species STRIDER R objects, this is intentional as to allow flexibility ad interoperability. The outputs at each step are `terra` SpatRasters or `sf` feature collections (POINT) see figure above, so if you can use custom R scripts to generate the outputs of any of the steps.
  
 You could use the `targets` R package to create reproducible workflows for simulating your data.
  
