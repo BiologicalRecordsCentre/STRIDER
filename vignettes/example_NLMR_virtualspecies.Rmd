@@ -31,11 +31,11 @@ set.seed(42)
 First we create a background SpatRaster from which to use the extent, resolution, and CRS.
 
 ```{r state, eval = F}
-# create background
-background <- rast(matrix(0,1000,1000))
+# Create the simulation object
+sim_obj <- SimulationObject(background = rast(matrix(0, 1000, 1000)))
 
 #simulate a uniform state of the environment across the background (although in this example we don't actually use it)
-state_env <- sim_state_env_NLMR(background,
+sim_obj <- sim_state_env_NLMR(sim_obj,
                           c("mpd","mpd","mpd","random"),
                            list(
                              list(roughness=0.5),
@@ -45,52 +45,53 @@ state_env <- sim_state_env_NLMR(background,
                              )
                            )
 
-plot(sim_state_env)
+plot(sim_obj@state_env)
 
-#simulate a uniform state of the target across the background
-state_target <- sim_state_target_virtualspecies(background,state_env,n_targets = 3)
+# Simulate a uniform state of the target across the background
+sim_obj <- sim_state_target_virtualspecies(sim_obj, n_targets = 3)
 
 #plot the state
-plot(state_target)
+plot(sim_obj@state_target)
 ```
 
 Next we simulate effort across the landscape
 
 ```{r effort, eval = F}
-#simulate effort across the landscape
-effort <- sim_effort_uniform(state_target,n_visits=100,replace=F)
+# Simulate effort across the landscape
+sim_obj <- sim_effort_uniform(sim_obj, n_visits = 100, replace = FALSE)
 
-#add the sampled locations to the plot
-plot(effort$geometry)
+# Add the sampled locations to the plot
+plot(sim_obj@effort$geometry)
+
 ```
 
 Next we simulate detections and identifications
 
 ```{r detections, eval = F}
-#simulate detection and identification
-detections <-sim_detect_equal(state_target,effort,prob=0.5)
+# Simulate detection and identification
+sim_obj <- sim_detect_equal(sim_obj, prob = 0.5)
 
-#plot the non-detections
-plot(detections$geometry[detections$detected==F],col="red",pch=4)
+# Plot the non-detections
+plot(sim_obj@detect$geometry[sim_obj@detect$detected == FALSE], col = "red", pch = 4)
 
 ```
 
 We then simulate whether these detections made are reported
 
 ```{r reporting, eval = F}
-# simulate reporting
-reports <- sim_report_equal(state_target,detections,prob=0.8,platform="iRecord")
+# Simulate reporting
+sim_obj <- sim_report_equal(sim_obj, prob = 0.8, platform = "iRecord")
 
-# colour reported records to yellow
-plot(reports$geometry[reports$reported],col="yellow")
+# Color reported records as yellow
+plot(sim_obj@report$geometry[sim_obj@report$reported], col = "yellow")
 ```
 
 And we're done. let's have a look at all the objects we have created
 
 ```{r review, eval = F}
-print(state_env)
-print(state_target)
-print(effort)
-print(detections)
-print(reports)
+print(sim_obj@state_env)
+print(sim_obj@state_target)
+print(sim_obj@effort)
+print(sim_obj@detect)
+print(sim_obj@report)
 ```

@@ -4,18 +4,10 @@
 \alias{sim_state_state_NLMR}
 \title{Simulates a state of the target using a wrapper around sim_state_env_NLMR}
 \usage{
-sim_state_state_NLMR(
-  background,
-  state_env = NULL,
-  alg,
-  params = NULL,
-  abundance = 1
-)
+sim_state_state_NLMR(simulation_object, alg, params = NULL, abundance = 1)
 }
 \arguments{
-\item{background}{a SpatRaster from which the extent and resolution will be used}
-
-\item{state_env}{State of the environment}
+\item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
 
 \item{alg}{single or list of algorithms as character}
 
@@ -24,7 +16,7 @@ sim_state_state_NLMR(
 \item{abundance}{Abundance of species}
 }
 \value{
-A SpatRaster with extent and resolution of background but values  describing the environment
+An updated simulation object with the newly calculated state of the target in the correct slot
 }
 \description{
 Simulates a state of the target using a wrapper around sim_state_env_NLMR

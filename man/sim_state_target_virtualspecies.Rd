@@ -5,26 +5,23 @@
 \title{Simulates a state of the target using a wrapper around virtualspecies functions}
 \usage{
 sim_state_target_virtualspecies(
-  background,
-  environment,
+  simulation_object,
   n_targets = 1,
   prop_env = 1,
   params = NULL
 )
 }
 \arguments{
-\item{background}{a SpatRaster from which the extent and resolution will be used}
-
-\item{environment}{a SpatRaster from which the extent and resolution will be used}
+\item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
 
 \item{n_targets}{numeric for the number of targets to generate}
 
-\item{prop_env}{numeric between 0 and 1 for proportion of environmental variables to be randomly used for each virtual species}
+\item{prop_env}{numeric between 0 and 1 for the proportion of environmental variables to be randomly used for each virtual species}
 
 \item{params}{list of vectors providing parameters to be passed to each NMLR function call}
 }
 \value{
-A SpatRaster with extent and resolution of background but values  describing the environment
+An updated simulation object with the newly calculated state of the target in the correct slot
 }
 \description{
 Simulates a state of the target using a wrapper around virtualspecies functions

@@ -4,21 +4,21 @@
 \alias{sim_state_env_uniform}
 \title{Simulates a uniform state of the environment}
 \usage{
-sim_state_env_uniform(background, value = 0)
+sim_state_env_uniform(simulation_object, value = 0)
 }
 \arguments{
-\item{background}{a SpatRaster from which the extent and resolution will be used}
+\item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
 
 \item{value}{the value for the SpatRaster}
 }
 \value{
-A SpatRaster with extent and resolution of background but values from abundance
+An updated simulation object with the newly calculated state of the environment in the correct slot
 }
 \description{
 Simulates a uniform state of the environment
 }
 \examples{
 \dontrun{
-sim_state_env_uniform(terra::rast(nrows=100,ncols=100))
+sim_state_env_uniform(simulation_object, 0)
 }
 }

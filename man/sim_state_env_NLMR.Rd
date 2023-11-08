@@ -4,23 +4,23 @@
 \alias{sim_state_env_NLMR}
 \title{Simulates a state of the environment using a wrapper around NLMR functions}
 \usage{
-sim_state_env_NLMR(background, alg, params = NULL)
+sim_state_env_NLMR(simulation_object, alg, params = NULL)
 }
 \arguments{
-\item{background}{a SpatRaster from which the extent and resolution will be used}
+\item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
 
 \item{alg}{single or list of algorithms as character}
 
 \item{params}{list of vectors providing parameters to be passed to each NMLR function call}
 }
 \value{
-A SpatRaster with extent and resolution of background but values  describing the environment
+An updated simulation object with the newly calculated state of the environment in the correct slot
 }
 \description{
 Simulates a state of the environment using a wrapper around NLMR functions
 }
 \examples{
 \dontrun{
-sim_state_env_NLMR(terra::rast(nrows=100,ncols=100),"random")
+sim_state_env_NLMR(simulation_object, "random")
 }
 }

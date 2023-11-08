@@ -4,16 +4,10 @@
 \alias{sim_detect_equal}
 \title{Simulates detection where all detections occur at an equal probability and identified correctly}
 \usage{
-sim_detect_equal(background, state_env, state_target, effort, prob = 1)
+sim_detect_equal(simulation_object, prob = 1)
 }
 \arguments{
-\item{background}{the background}
-
-\item{state_env}{description}
-
-\item{state_target}{a SpatRaster for the true state to be detected from,and from which the extent and resolution will be used}
-
-\item{effort}{a sf of sampled points}
+\item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
 
 \item{prob}{a numeric probability of each target being detected}
 }

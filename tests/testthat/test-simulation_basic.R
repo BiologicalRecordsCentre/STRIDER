@@ -1,50 +1,52 @@
 library(STRIDER)
 
-# create background
-background <- terra::rast(matrix(0,1000,1000))
+# Create the background
+background <- terra::rast(matrix(0,1000,600))
 
-#simulate a uniform state of the environment across the background
-state_env <- sim_state_env_uniform(background)
+# 1 Create the simulation object
+sim_obj <- SimulationObject(background = background)
 
+# 2 Simulate a uniform state of the target across the background within the simulation object
+sim_obj <- sim_state_target_uniform(sim_obj, abundance = 42)
+
+# 3 Simulate effort across the landscape within the simulation object
+sim_obj <- sim_effort_uniform(sim_obj, n_visits = 100, replace = FALSE)
+
+# 4 Simulate detection within the simulation object
+sim_obj <- sim_detect_equal(sim_obj, prob = 0.5)
+
+# 5 Simulate reporting within the simulation object
+sim_obj <- sim_report_equal(sim_obj, prob = 0.8, platform = "iRecord")
+
+
+#1
 test_that("Test creating a uniform environment", {
-  expect_true(is(state_env, "SpatRaster"))
-  expect_equal(dim(background),dim(state_env))
+  expect_true(class(sim_obj) == "SimulationObject")
+  expect_true(class(sim_obj@background) == "SpatRaster")
+  expect_equal(dim(sim_obj@background), dim(sim_obj@background))
 })
 
-
-#simulate a uniform state of the target across the background
-state_target <- sim_state_target_uniform(background,state_env,42)
-
+#2
 test_that("Creating a uniform target distribution", {
-  expect_true(is(state_target, "SpatRaster"))
-  expect_equal(dim(background),dim(state_target))
+  expect_true(class(sim_obj@state_target) == "SpatRaster")
+  expect_equal(dim(sim_obj@background), dim(sim_obj@state_target))
 })
 
-
-#simulate effort across the landscape
-effort <- sim_effort_uniform(background,state_env,state_target,n_visits=100,replace=F)
-
+#3
 test_that("Simulating effort across the landscape", {
-  expect_true(is(effort, "sf"))
-  expect_equal(nrow(effort),100)
+  expect_identical(class(sim_obj@effort), c("sf","data.frame"))
+  expect_equal(nrow(sim_obj@effort), 100)
 })
 
-
-# simulate detection
-detections <-sim_detect_equal(background,state_env,state_target,effort,prob=0.5)
-
+#4
 test_that("Simulating detection", {
-  expect_true(is(detections, "sf"))
-  expect_equal(nrow(detections),nrow(effort))
+  expect_identical(class(sim_obj@detect), c("sf","data.frame"))
+  expect_equal(nrow(sim_obj@detect), nrow(sim_obj@effort))
 })
 
-# simulate reporting
-reports <- sim_report_equal(background,state_env,state_target,effort,detections,prob=0.8,platform="iRecord")
-
+#5
 test_that("Simulating reporting", {
-  expect_true(is(reports, "sf"))
-  expect_equal(nrow(reports),nrow(detections))
+  expect_identical(class(sim_obj@report), c("sf","data.frame"))
+  expect_equal(nrow(sim_obj@report), nrow(sim_obj@detect))
 })
-
-
 

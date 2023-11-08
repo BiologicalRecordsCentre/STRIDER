@@ -4,39 +4,23 @@
 \alias{sim_report_equal}
 \title{Simulates reporting where all reports occur at an equal probability and identified correctly}
 \usage{
-sim_report_equal(
-  background,
-  state_env,
-  state_target,
-  effort,
-  detect,
-  prob = 1,
-  platform = "iRecord"
-)
+sim_report_equal(simulation_object, prob = 1, platform = "iRecord")
 }
 \arguments{
-\item{background}{the background}
-
-\item{state_env}{description}
-
-\item{state_target}{a SpatRaster for the true state to be detected from, and from which the extent and resolution will be used}
-
-\item{effort}{effort}
-
-\item{detect}{a sf of sampled points}
+\item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
 
 \item{prob}{a numeric probability of each target being reported}
 
 \item{platform}{name of the recording platform}
 }
 \value{
-A simple feature collection with geometry type POINTs
+An updated simulation object with the newly calculated report in the correct slot
 }
 \description{
 Simulates reporting where all reports occur at an equal probability and identified correctly
 }
 \examples{
 \dontrun{
-sim_report_equal(state,detections,0.5)
+sim_report_equal(simulation_object, 0.5, "iRecord")
 }
 }

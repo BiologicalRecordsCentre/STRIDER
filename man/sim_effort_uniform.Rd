@@ -4,33 +4,23 @@
 \alias{sim_effort_uniform}
 \title{Simulates a uniform effort}
 \usage{
-sim_effort_uniform(
-  background,
-  state_env,
-  state_target,
-  n_visits = 100,
-  replace = F
-)
+sim_effort_uniform(simulation_object, n_visits = 100, replace = FALSE)
 }
 \arguments{
-\item{background}{the background}
-
-\item{state_env}{description}
-
-\item{state_target}{a SpatRaster from which the extent and resolution will be used}
+\item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
 
 \item{n_visits}{a number indicating the average number of visits}
 
 \item{replace}{a logical indicating whether to sample with replacement}
 }
 \value{
-A simple feature collection with geometry type POINTs
+An updated simulation object with the newly calculated effort in the correct slot
 }
 \description{
 Simulates a uniform effort
 }
 \examples{
 \dontrun{
-sim_effort_uniform(state,100,T)
+sim_effort_uniform(simulation_object, 100, FALSE)
 }
 }

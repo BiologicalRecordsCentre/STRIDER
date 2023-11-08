@@ -4,23 +4,23 @@
 \alias{sim_state_env_gradient}
 \title{Simulates a uniform state of the environment}
 \usage{
-sim_state_env_gradient(background, from = 0, to = 1)
+sim_state_env_gradient(simulation_object, from = 0, to = 1)
 }
 \arguments{
-\item{background}{a SpatRaster from which the extent and resolution will be used}
+\item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
 
 \item{from}{lower value of gradient}
 
 \item{to}{upper value of gradient}
 }
 \value{
-A SpatRaster with extent and resolution of background but values from abundance
+An updated simulation object with the newly calculated state of the environment in the correct slot
 }
 \description{
 Simulates a uniform state of the environment
 }
 \examples{
 \dontrun{
-sim_state_env_gradient(terra::rast(nrows=100,ncols=100))
+sim_state_env_gradient(simulation_object, 0, 1)
 }
 }
