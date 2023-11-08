@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This is a basic example of how this package works.
 
-```{r setup}
+```{r setup, eval=F}
 library(STRIDER)
 library(terra)
 library(sf)
@@ -27,7 +27,7 @@ set.seed(42)
 
 First, we create a SimulationObject and set up the background SpatRaster from which we use the extent, resolution, and CRS.
 
-```{r state}
+```{r state, eval=F}
 # Create the simulation object
 sim_obj <- SimulationObject(background = rast(matrix(0, 1000, 1000)))
 
@@ -43,7 +43,7 @@ plot(sim_obj@state_target)
 
 Next we simulate effort across the landscape
 
-```{r effort}
+```{r effort, eval=F}
 # Simulate effort across the landscape
 sim_obj <- sim_effort_uniform(sim_obj, n_visits = 100, replace = FALSE)
 
@@ -54,7 +54,7 @@ plot(sim_obj@effort$geometry)
 
 Next we simulate detections and identifications
 
-```{r detections}
+```{r detections, eval=F}
 # Simulate detection and identification
 sim_obj <- sim_detect_equal(sim_obj, prob = 0.5)
 
@@ -64,7 +64,7 @@ plot(sim_obj@detect$geometry[sim_obj@detect$detected == FALSE], col = "red", pch
 
 We then simulate whether these detections make are reported
 
-```{r reporting}
+```{r reporting, eval=F}
 # Simulate reporting
 sim_obj <- sim_report_equal(sim_obj, prob = 0.8, platform = "iRecord")
 
@@ -74,7 +74,7 @@ plot(sim_obj@report$geometry[sim_obj@report$reported], col = "yellow")
 
 And we're done. let's have a look at all the objects we have created
 
-```{r review}
+```{r review, eval=F}
 print(sim_obj@state_env)
 print(sim_obj@state_target)
 print(sim_obj@effort)

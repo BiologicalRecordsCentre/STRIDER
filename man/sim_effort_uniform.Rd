@@ -4,12 +4,22 @@
 \alias{sim_effort_uniform}
 \title{Simulates a uniform effort}
 \usage{
-sim_effort_uniform(simulation_object, n_visits = 100, replace = FALSE)
+sim_effort_uniform(
+  simulation_object,
+  n_samplers = 1,
+  n_visits = 1,
+  n_sample_events = 1,
+  replace = FALSE
+)
 }
 \arguments{
 \item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
 
-\item{n_visits}{a number indicating the average number of visits}
+\item{n_samplers}{a number indicating the number of samplers}
+
+\item{n_visits}{a number indicating the average number of visits per sampler}
+
+\item{n_sample_events}{a number of sampling events made per visit}
 
 \item{replace}{a logical indicating whether to sample with replacement}
 }
@@ -21,6 +31,6 @@ Simulates a uniform effort
 }
 \examples{
 \dontrun{
-sim_effort_uniform(simulation_object, 100, FALSE)
+sim_effort_uniform(simulation_object, 100, 20,1 FALSE)
 }
 }

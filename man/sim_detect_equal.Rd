@@ -2,9 +2,9 @@
 % Please edit documentation in R/sim_detect_equal.R
 \name{sim_detect_equal}
 \alias{sim_detect_equal}
-\title{Simulates detection where all detections occur at an equal probability and identified correctly}
+\title{Simulates detection / identification where all detections occur at an equal probability and identified correctly}
 \usage{
-sim_detect_equal(simulation_object, prob = 1)
+sim_detect_equal(simulation_object, prob = 0.5)
 }
 \arguments{
 \item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
@@ -15,7 +15,7 @@ sim_detect_equal(simulation_object, prob = 1)
 A simple feature collection with geometry type POINTs
 }
 \description{
-Simulates detection where all detections occur at an equal probability and identified correctly
+Simulates detection / identification where all detections occur at an equal probability and identified correctly
 }
 \examples{
 \dontrun{

@@ -4,12 +4,12 @@
 \alias{sim_state_target_uniform}
 \title{Simulates a uniform state of the target}
 \usage{
-sim_state_target_uniform(simulation_object, abundance = 10)
+sim_state_target_uniform(simulation_object, value = 0.5)
 }
 \arguments{
 \item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
 
-\item{abundance}{a number indicating the abundance of the target in each cell}
+\item{value}{a number indicating the value of the target in each cell}
 }
 \value{
 An updated simulation object with the newly calculated state of the target in the correct slot
@@ -19,6 +19,6 @@ Simulates a uniform state of the target
 }
 \examples{
 \dontrun{
-sim_state_target_uniform(simulation_object, 42)
+sim_state_target_uniform(simulation_object, 0.5)
 }
 }

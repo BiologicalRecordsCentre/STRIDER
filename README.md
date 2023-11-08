@@ -33,25 +33,39 @@ Install from GitHub
 
 ## How to use the R package
 
-For each of the 5 processes there are choices of functions to use
-depending on your need. For each the processes there is the most basic
+For each of the 5 processes, there are choices of functions to use
+depending on your needs. For each process, there is the most basic
 version for demonstration purposes.
 
 The functions all follow this basic schema whereby all the objects from
-the previous stage are arguments in the subsequent functions, whether or
-not they are actually used in the calculations within the function:
+the previous stage, along with the `background` object, are combined
+into a single `simulation_object`. This object is then used as an
+argument in the subsequent functions, whether or not they are actually
+used in the calculations within the function.
 
-- `state_env    <- sim_state_env_______(background)`
-- `state_target <- sim_state_target____(background, state_env, ...)`
-- `effort       <- sim_effort__________(background, state_env, state_target, ...)`
-- `detect       <- sim_detect__________(background, state_env, state_target, effort, ...)`
-- `report       <- sim_detect__________(background, state_env, state_target, effort, detect, ...)`
+The `simulation_object` includes the following components:
 
-There are no species STRIDER R objects, this is intentional as to allow
-flexibility ad interoperability. The outputs at each step are `terra`
-SpatRasters or `sf` feature collections (POINT) see figure above, so if
-you can use custom R scripts to generate the outputs of any of the
-steps.
+- `@background`: Background extent and resolution of the simulated
+  reality
+- `@state_env`: Simulated state of the environment
+- `@state_target`: Simulated state of the target
+- `@effort`: Simulated sampling effort
+- `@detect`: Simulated detection information
+- `@report`: Simulated reporting information
+
+You can access and manipulate the `simulation_object` at each step to
+generate the outputs of the corresponding processes. The outputs at each
+step are `terra` SpatRasters or `sf` feature collections (POINT), as
+shown in the figure above. You can use custom R scripts to generate the
+outputs of any of the steps, ensuring flexibility and interoperability.
+
+The functions used at each stage are as follows:
+
+- `sim_state_env_...(simulation_object, ...)`
+- `sim_state_target_...(simulation_object, ...)`
+- `sim_effort_...(simulation_object, ...)`
+- `sim_detect_...(simulation_object, ...)`
+- `sim_detect_...(simulation_object, ....)`
 
 You could use the `targets` R package to create reproducible workflows
 for simulating your data.
@@ -158,17 +172,42 @@ library(sf)
     ## Linking to GEOS 3.9.3, GDAL 3.5.2, PROJ 8.2.1; sf_use_s2() is TRUE
 
 ``` r
-background <- terra::rast(matrix(0,1000,600)) # create background
-state_env <- sim_state_env_gradient(background) #environment
-state_target <- sim_state_target_uniform(background,state_env,42) #target
-effort <- sim_effort_uniform(background,state_env,state_target,n_visits=100,replace=F) #effort
-detections <-sim_detect_equal(background,state_env,state_target,effort,prob=0.5) #detection
-reports <- sim_report_equal(background,state_env,state_target,effort,detections,prob=0.8,platform="iRecord") #reports
+# Create the background
+background <- terra::rast(matrix(0,30,30))
 
-plot(state_target) #state of target
-plot(effort$geometry,add=T) #effort
-plot(detections$geometry[detections$detected==F],col="red",pch=4,add=T) #highlight the non-detections
-plot(reports$geometry[reports$reported],col="yellow",add=T) # highlight reported records as yellow
+# Create the simulation object
+sim_obj <- SimulationObject(background = background)
+
+# Simulate the environment state
+sim_obj <- sim_state_env_gradient(sim_obj)
+
+# Simulate the target state
+sim_obj <- sim_state_target_uniform(sim_obj, value = 0.5)
+
+#realise the state
+sim_obj <- sim_state_target_realise_binomial(sim_obj)
+
+# Simulate the sampling effort
+sim_obj <- sim_effort_uniform(sim_obj, n_visits = 100, replace = FALSE)
+
+# Simulate the detection
+sim_obj <- sim_detect_equal(sim_obj, prob = 0.5)
+```
+
+    ## [1] 1
+
+``` r
+# Simulate the reporting
+sim_obj <- sim_report_equal(sim_obj, prob = 0.8, platform = "iRecord")
+
+plot(sim_obj@state_target_realised) # State of the target
+plot(sim_obj@effort$geometry, add = TRUE,pch=16) # Effort
+plot(sim_obj@detect$geometry[sim_obj@detect$detected == FALSE], col = "red", pch = 4, add = TRUE) # Highlight the non-detections
+plot(sim_obj@report$geometry[sim_obj@report$reported], col = "yellow", add = TRUE) # Highlight reported records as yellow
+
+#add a legend
+legend(1, 5, legend=c("Sampled", "Not detected","Reported"),
+       col=c("black","red", "yellow"), pch=c(16,4,1), cex=0.8,bg='grey')
 ```
 
 ![](README_files/figure-gfm/example-1.png)<!-- -->

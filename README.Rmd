@@ -45,7 +45,8 @@ The `simulation_object` includes the following components:
 
 - `@background`: Background extent and resolution of the simulated reality
 - `@state_env`: Simulated state of the environment
-- `@state_target`: Simulated state of the target
+- `@state_target`: Simulated state of the target (as a continuous probability)
+- `@state_target_realised`: Simulated state of the target (as a realised absolute/binary value)
 - `@effort`: Simulated sampling effort
 - `@detect`: Simulated detection information
 - `@report`: Simulated reporting information
@@ -56,9 +57,10 @@ The functions used at each stage are as follows:
 
  * `sim_state_env_...(simulation_object, ...)`
  * `sim_state_target_...(simulation_object, ...)`
+ * `sim_state_target_realise_...(simulation_object, ...)`
  * `sim_effort_...(simulation_object, ...)`
  * `sim_detect_...(simulation_object, ...)`
- * `sim_detect_...(simulation_object, ....)`
+ * `sim_report_...(simulation_object, ....)`
  
 You could use the `targets` R package to create reproducible workflows for simulating your data.
 
@@ -122,7 +124,7 @@ library(terra)
 library(sf)
 
 # Create the background
-background <- terra::rast(matrix(0,1000,600))
+background <- terra::rast(matrix(0,30,30))
 
 # Create the simulation object
 sim_obj <- SimulationObject(background = background)
@@ -131,7 +133,10 @@ sim_obj <- SimulationObject(background = background)
 sim_obj <- sim_state_env_gradient(sim_obj)
 
 # Simulate the target state
-sim_obj <- sim_state_target_uniform(sim_obj, abundance = 42)
+sim_obj <- sim_state_target_uniform(sim_obj, value = 0.5)
+
+#realise the state
+sim_obj <- sim_state_target_realise_binomial(sim_obj)
 
 # Simulate the sampling effort
 sim_obj <- sim_effort_uniform(sim_obj, n_visits = 100, replace = FALSE)
@@ -142,8 +147,12 @@ sim_obj <- sim_detect_equal(sim_obj, prob = 0.5)
 # Simulate the reporting
 sim_obj <- sim_report_equal(sim_obj, prob = 0.8, platform = "iRecord")
 
-plot(sim_obj@state_target) # State of the target
-plot(sim_obj@effort$geometry, add = TRUE) # Effort
+plot(sim_obj@state_target_realised) # State of the target
+plot(sim_obj@effort$geometry, add = TRUE,pch=16) # Effort
 plot(sim_obj@detect$geometry[sim_obj@detect$detected == FALSE], col = "red", pch = 4, add = TRUE) # Highlight the non-detections
 plot(sim_obj@report$geometry[sim_obj@report$reported], col = "yellow", add = TRUE) # Highlight reported records as yellow
+
+#add a legend
+legend(1, 5, legend=c("Sampled", "Not detected","Reported"),
+       col=c("black","red", "yellow"), pch=c(16,4,1), cex=0.8,bg='grey')
 ```
