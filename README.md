@@ -1,4 +1,6 @@
 
+*Edit `README.Rmd` not `README.md`*
+
 # STRIDER (STate, effoRt, Identification/DEtection, Reporting)
 
 ## Overview
@@ -195,6 +197,8 @@ occurrence (slot `@state_target`), and a realised absolute value (slot
 representing species occupancy or a positive integer representing
 abundance. Here’s an example:
 
+![](README_files/figure-gfm/realisation_diagram-1.png)<!-- -->
+
 Both of these representations of state are represented in the simulation
 object as SpatRaster with layers for each target. Again, if you want the
 target to change over time then create a list of rasters where each list
@@ -257,20 +261,20 @@ target present).
 
 ``` r
 # Simulate the sampling effort
-sim_obj <- sim_effort_uniform(sim_obj, n_samplers=2, n_visits = 1, n_sample_unit = 2)
+sim_obj <- sim_effort_uniform(sim_obj, n_samplers=2, n_visits = 1, n_sample_units = 2)
 sim_obj@effort
 ```
 
     ## Simple feature collection with 4 features and 4 fields
     ## Geometry type: POINT
     ## Dimension:     XY
-    ## Bounding box:  xmin: 15.5 ymin: 15.5 xmax: 18.5 ymax: 23.5
+    ## Bounding box:  xmin: 17.5 ymin: 5.5 xmax: 20.5 ymax: 20.5
     ## CRS:           NA
     ##   sampler visit unit cell_id          geometry
-    ## 1       1     1    1     199 POINT (18.5 23.5)
-    ## 2       1     1    2     199 POINT (18.5 23.5)
-    ## 3       2     1    1     436 POINT (15.5 15.5)
-    ## 4       2     1    2     436 POINT (15.5 15.5)
+    ## 1       1     1    1     288 POINT (17.5 20.5)
+    ## 2       1     1    2     288 POINT (17.5 20.5)
+    ## 3       2     1    1     741  POINT (20.5 5.5)
+    ## 4       2     1    2     741  POINT (20.5 5.5)
 
 All functions for simulating effort start with `sim_effort_`
 

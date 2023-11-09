@@ -11,6 +11,8 @@ library(terra)
 library(sf)
 ```
 
+_Edit `README.Rmd` not `README.md`_
+
 # STRIDER (STate, effoRt, Identification/DEtection, Reporting)
 
 ## Overview
@@ -112,7 +114,7 @@ The BYOD (Bring Your Own Data) function is `sim_state_env_byod()` where you can 
 
 Here we define the state of the target or targets. We define two versions of this: a continuous variable representing a probability of occurrence (slot `@state_target`), and a realised absolute value (slot `@state_target_realised`) which could contain a binary (0 or 1) representing species occupancy or a positive integer representing abundance. Here's an example: 
 
-```{r realisation_diagram, include=FALSE,echo=F}
+```{r realisation_diagram, echo=F}
 sim_obj <- sim_state_target_uniform(sim_obj)
 sim_obj <- sim_state_target_realise_binomial(sim_obj)
 par(mfrow=c(1,2))
@@ -159,7 +161,7 @@ Here's a very basic example where we generate effort comprising of two samplers,
  
 ```{r sampling data}
 # Simulate the sampling effort
-sim_obj <- sim_effort_uniform(sim_obj, n_samplers=2, n_visits = 1, n_sample_unit = 2)
+sim_obj <- sim_effort_uniform(sim_obj, n_samplers=2, n_visits = 1, n_sample_units = 2)
 sim_obj@effort
 ```
  
