@@ -13,7 +13,7 @@ sim_obj <- sim_state_target_uniform(sim_obj, value= 0.5)
 sim_obj <- sim_state_target_realise_binomial(sim_obj)
 
 # 3 Simulate effort across the landscape within the simulation object
-sim_obj <- sim_effort_uniform(sim_obj, n_samplers = 2, n_visits = 3, n_sample_events=2, replace = FALSE)
+sim_obj <- sim_effort_uniform(sim_obj, n_samplers = 2, n_visits = 3, n_sample_units=2, replace = FALSE)
 
 # 4 Simulate detection within the simulation object
 sim_obj <- sim_detect_equal(sim_obj, prob = 0.5)

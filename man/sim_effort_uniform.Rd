@@ -8,7 +8,7 @@ sim_effort_uniform(
   simulation_object,
   n_samplers = 1,
   n_visits = 1,
-  n_sample_events = 1,
+  n_sample_units = 1,
   replace = FALSE
 )
 }
@@ -19,7 +19,7 @@ sim_effort_uniform(
 
 \item{n_visits}{a number indicating the average number of visits per sampler}
 
-\item{n_sample_events}{a number of sampling events made per visit}
+\item{n_sample_units}{a number of sampling events made per visit}
 
 \item{replace}{a logical indicating whether to sample with replacement}
 }
