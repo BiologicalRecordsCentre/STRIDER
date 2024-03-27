@@ -50,7 +50,7 @@ The `simulation_object` includes the following components:
 
 - `@background`: Background extent and resolution of the simulated reality
 - `@state_env`: Simulated state of the environment
-- `@state_target`: Simulated state of the target (as a continuous probability)
+- `@state_target_suitability`: Simulated state of the target (as environmental suitability)
 - `@state_target_realised`: Simulated state of the target (as a realised absolute/binary value)
 - `@effort`: Simulated sampling effort
 - `@detect`: Simulated detection information
@@ -61,11 +61,11 @@ You can access and manipulate the `simulation_object` at each step to generate t
 The functions used at each stage are as follows:
 
  * `sim_state_env_...(simulation_object, ...)`
- * `sim_state_target_...(simulation_object, ...)`
+ * `sim_state_target_sutability...(simulation_object, ...)`
  * `sim_state_target_realise_...(simulation_object, ...)`
  * `sim_effort_...(simulation_object, ...)`
  * `sim_detect_...(simulation_object, ...)`
- * `sim_report_...(simulation_object, ....)`
+ * `sim_report_...(simulation_object, ...)`
  
 You could use the `targets` R package to create reproducible workflows for simulating your data.
 
@@ -75,7 +75,7 @@ The term "state" refers to the underlying true conditions of the environment and
 
 Environmental State: This refers to the simulated state of the environment, which can include various abiotic and biotic factors, such as temperature, humidity, terrain features, vegetation, or any other relevant ecological parameters. Simulating the environmental state facilitates understanding of how different environmental conditions may influence the presence or behaviour of the target species.
 
-Target State: This represents the simulated distribution of the target within the environment. The target is often influenced by the environmental state. In STRIDER the target is represented in two forms: a continuous variable representing a probability of occurrence (slot `@state_target`), and a realised absolute value (slot `@state_target_realised`) which could contain a binary (0 or 1) representing species occupancy or a positive integer representing abundance.
+Target State: This represents the simulated distribution of the target within the environment. The target is often influenced by the environmental state. In STRIDER the target is represented in two forms: a continuous variable representing a probability of occurrence (slot `@state_target_suitability`), and a realised absolute value (slot `@state_target_realised`) which could contain a binary (0 or 1) representing species occupancy or a positive integer representing abundance.
 
 In current form STRIDER represents states as being grid-based and relies on a consistent grid resolution/extent across all state variables. States are represented as rasters (`SpatRaster`) with any resolution, extent or CRS (or no CRS). We simulate the state of the environment and target separately. The simulation object uses a SpatRaster in slot `@background`. The resolution, extent and CRS is inherited from the background when simulating states.
 
@@ -91,6 +91,7 @@ background <- terra::rast(matrix(0,30,30))
 
 # Create the simulation object
 sim_obj <- SimulationObject(background = background)
+sim_obj <- sim_state_env_uniform(sim_obj,value = 20)
 sim_obj
 ```
 
@@ -115,21 +116,21 @@ The BYOD (Bring Your Own Data) function is `sim_state_env_byod()` where you can 
 Here we define the state of the target or targets. We define two versions of this: a continuous variable representing a probability of occurrence (slot `@state_target`), and a realised absolute value (slot `@state_target_realised`) which could contain a binary (0 or 1) representing species occupancy or a positive integer representing abundance. Here's an example: 
 
 ```{r realisation_diagram, echo=F}
-sim_obj <- sim_state_target_uniform(sim_obj)
+sim_obj <- sim_state_target_suitability_uniform(sim_obj)
 sim_obj <- sim_state_target_realise_binomial(sim_obj)
 par(mfrow=c(1,2))
-plot(sim_obj@state_target,main = "@state_target")
+plot(sim_obj@state_target_suitability,main = "@state_target_suitability")
 plot(sim_obj@state_target_realised,main = "@state_target_realised")
 par(mfrow=c(1,1))
 ```
 
 Both of these representations of state are represented in the simulation object as SpatRaster with layers for each target. Again, if you want the target to change over time then create a list of rasters where each list item represents the target state at each time step, but this will need some wrangling.
 
-All functions for simulating target state start with `sim_state_target_`
+All functions for simulating target state start with `sim_state_target_suitability`
 
-The minimal version of this function is `sim_state_target_uniform()` which produces a uniform abundance across space.
+The minimal version of this function is `sim_state_target_suitability_uniform()` which produces a uniform abundance across space.
 
-The BYOD function is `sim_state_target_byod()` mening you could also use other packages to generate a target state (eg.rangeshiftR, virtualspecies) then convert the output to a `SpatRaster`.
+The BYOD function is `sim_state_target_byod()` (NOT IMPLEMENTED YET) meaning you could also use other packages to generate a target state (eg.rangeshiftR, virtualspecies) then convert the output to a `SpatRaster`.
  
 ## Simulating effort
 
@@ -210,7 +211,7 @@ sim_obj <- SimulationObject(background = background)
 sim_obj <- sim_state_env_gradient(sim_obj)
 
 # Simulate the target state
-sim_obj <- sim_state_target_uniform(sim_obj, value = 0.5)
+sim_obj <- sim_state_target_suitability_uniform(sim_obj, value = 0.5)
 
 #realise the state
 sim_obj <- sim_state_target_realise_binomial(sim_obj)

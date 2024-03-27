@@ -15,8 +15,15 @@ sim_detect_equal <- function(simulation_object, prob = 0.5) {
 
   detections_all <- data.frame()
 
+  #how many targets states are there?
+  if(length(dim(state_target))<3){
+    n_targets <- 1
+  } else {
+    n_targets <- dim(state_target)[3]
+  }
+
   #loop through each of the targets
-  for (i in 1:(dim(state_target)[3])) {
+  for (i in 1:n_targets) {
     detections <- effort
     detections$target <- i
 

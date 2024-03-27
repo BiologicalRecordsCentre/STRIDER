@@ -50,8 +50,8 @@ The `simulation_object` includes the following components:
 - `@background`: Background extent and resolution of the simulated
   reality
 - `@state_env`: Simulated state of the environment
-- `@state_target`: Simulated state of the target (as a continuous
-  probability)
+- `@state_target_suitability`: Simulated state of the target (as
+  environmental suitability)
 - `@state_target_realised`: Simulated state of the target (as a realised
   absolute/binary value)
 - `@effort`: Simulated sampling effort
@@ -67,11 +67,11 @@ outputs of any of the steps, ensuring flexibility and interoperability.
 The functions used at each stage are as follows:
 
 - `sim_state_env_...(simulation_object, ...)`
-- `sim_state_target_...(simulation_object, ...)`
+- `sim_state_target_sutability...(simulation_object, ...)`
 - `sim_state_target_realise_...(simulation_object, ...)`
 - `sim_effort_...(simulation_object, ...)`
 - `sim_detect_...(simulation_object, ...)`
-- `sim_report_...(simulation_object, ....)`
+- `sim_report_...(simulation_object, ...)`
 
 You could use the `targets` R package to create reproducible workflows
 for simulating your data.
@@ -92,7 +92,7 @@ Target State: This represents the simulated distribution of the target
 within the environment. The target is often influenced by the
 environmental state. In STRIDER the target is represented in two forms:
 a continuous variable representing a probability of occurrence (slot
-`@state_target`), and a realised absolute value (slot
+`@state_target_suitability`), and a realised absolute value (slot
 `@state_target_realised`) which could contain a binary (0 or 1)
 representing species occupancy or a positive integer representing
 abundance.
@@ -123,6 +123,7 @@ background <- terra::rast(matrix(0,30,30))
 
 # Create the simulation object
 sim_obj <- SimulationObject(background = background)
+sim_obj <- sim_state_env_uniform(sim_obj,value = 20)
 sim_obj
 ```
 
@@ -139,9 +140,17 @@ sim_obj
     ## max value   :     0 
     ## 
     ## Slot "state_env":
-    ## NULL
+    ## class       : SpatRaster 
+    ## dimensions  : 30, 30, 1  (nrow, ncol, nlyr)
+    ## resolution  : 1, 1  (x, y)
+    ## extent      : 0, 30, 0, 30  (xmin, xmax, ymin, ymax)
+    ## coord. ref. :  
+    ## source(s)   : memory
+    ## name        : env 
+    ## min value   :  20 
+    ## max value   :  20 
     ## 
-    ## Slot "state_target":
+    ## Slot "state_target_suitability":
     ## NULL
     ## 
     ## Slot "state_target_realised":
@@ -205,14 +214,17 @@ target to change over time then create a list of rasters where each list
 item represents the target state at each time step, but this will need
 some wrangling.
 
-All functions for simulating target state start with `sim_state_target_`
+All functions for simulating target state start with
+`sim_state_target_suitability`
 
-The minimal version of this function is `sim_state_target_uniform()`
-which produces a uniform abundance across space.
+The minimal version of this function is
+`sim_state_target_suitability_uniform()` which produces a uniform
+abundance across space.
 
-The BYOD function is `sim_state_target_byod()` mening you could also use
-other packages to generate a target state (eg.rangeshiftR,
-virtualspecies) then convert the output to a `SpatRaster`.
+The BYOD function is `sim_state_target_byod()` (NOT IMPLEMENTED YET)
+meaning you could also use other packages to generate a target state
+(eg.rangeshiftR, virtualspecies) then convert the output to a
+`SpatRaster`.
 
 ## Simulating effort
 
@@ -265,16 +277,16 @@ sim_obj <- sim_effort_uniform(sim_obj, n_samplers=2, n_visits = 1, n_sample_unit
 sim_obj@effort
 ```
 
-    ## Simple feature collection with 4 features and 4 fields
+    ## Simple feature collection with 4 features and 7 fields
     ## Geometry type: POINT
     ## Dimension:     XY
-    ## Bounding box:  xmin: 17.5 ymin: 5.5 xmax: 20.5 ymax: 20.5
+    ## Bounding box:  xmin: 8.5 ymin: 8.5 xmax: 25.5 ymax: 19.5
     ## CRS:           NA
-    ##   sampler visit unit cell_id          geometry
-    ## 1       1     1    1     288 POINT (17.5 20.5)
-    ## 2       1     1    2     288 POINT (17.5 20.5)
-    ## 3       2     1    1     741  POINT (20.5 5.5)
-    ## 4       2     1    2     741  POINT (20.5 5.5)
+    ##   sampler visit unit cell_id          geometry env suit_target_1 real_target_1
+    ## 1       1     1    1     326 POINT (25.5 19.5)  20           0.5             0
+    ## 2       1     1    2     326 POINT (25.5 19.5)  20           0.5             0
+    ## 3       2     1    1     639   POINT (8.5 8.5)  20           0.5             1
+    ## 4       2     1    2     639   POINT (8.5 8.5)  20           0.5             1
 
 All functions for simulating effort start with `sim_effort_`
 
@@ -342,7 +354,7 @@ sim_obj <- SimulationObject(background = background)
 sim_obj <- sim_state_env_gradient(sim_obj)
 
 # Simulate the target state
-sim_obj <- sim_state_target_uniform(sim_obj, value = 0.5)
+sim_obj <- sim_state_target_suitability_uniform(sim_obj, value = 0.5)
 
 #realise the state
 sim_obj <- sim_state_target_realise_binomial(sim_obj)

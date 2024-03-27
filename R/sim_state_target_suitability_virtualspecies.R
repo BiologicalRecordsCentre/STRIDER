@@ -5,7 +5,7 @@
 #' @param prop_env numeric between 0 and 1 for the proportion of environmental variables to be randomly used for each virtual species
 #' @param params list of vectors providing parameters to be passed to each NMLR function call
 #' @return An updated simulation object with the newly calculated state of the target in the correct slot
-sim_state_target_virtualspecies <- function(simulation_object, n_targets = 1, prop_env = 1, params = NULL) {
+sim_state_target_suitability_virtualspecies <- function(simulation_object, n_targets = 1, prop_env = 1, params = NULL) {
   background <- simulation_object@background
   environment <- simulation_object@state_env
 
@@ -32,7 +32,7 @@ sim_state_target_virtualspecies <- function(simulation_object, n_targets = 1, pr
 
     layer <- do.call("generateRandomSp", param)
 
-    layers[[i]] <- terra::rast(layer$suitab.raster)
+    layers[[i]] <- layer$suitab.raster
   }
 
   # Convert to spatraster
@@ -45,7 +45,7 @@ sim_state_target_virtualspecies <- function(simulation_object, n_targets = 1, pr
   # Unload the package
   detach("package:virtualspecies", unload = TRUE)
 
-  simulation_object@state_target <- layers
+  simulation_object@state_target_suitability <- layers
 
   # Return the updated simulation_object
   return(simulation_object)

@@ -13,7 +13,7 @@
 sim_effort_uniform <- function(simulation_object, n_samplers = 1, n_visits = 1, n_sample_units=1, replace = FALSE) {
 
   #which cells are visits
-  state_target <- simulation_object@state_target
+  state_target <- simulation_object@state_target_suitability
   visited_cells <- rep(sample(terra::cells(state_target), size = n_samplers*n_visits, replace = replace),each = n_sample_units)
 
   # capture data
@@ -25,6 +25,15 @@ sim_effort_uniform <- function(simulation_object, n_samplers = 1, n_visits = 1, 
   sim_effort_points$cell_id <- visited_cells
 
   effort_sf <- sf::st_as_sf(sim_effort_points, coords = c("x", "y"), crs = terra::crs(state_target))
+
+  #get values from env, suitability, realised
+  extracted_values <- terra::extract(simulation_object@state_env,effort_sf$cell_id)
+  effort_sf[,names(extracted_values)] <- extracted_values
+  extracted_values <- terra::extract(simulation_object@state_target_suitability,effort_sf$cell_id)
+  effort_sf[,paste0("suit_",names(extracted_values))] <- extracted_values
+  extracted_values <- terra::extract(simulation_object@state_target_realised,effort_sf$cell_id)
+  effort_sf[,paste0("real_",names(extracted_values))] <- extracted_values
+
   simulation_object@effort <- effort_sf
 
   # Return the updated simulation_object
