@@ -1,4 +1,4 @@
-#' Simulates a uniform state of the environment
+#' Simulates a gradiated state of the environment
 #'
 #' @param simulation_object an R object of class 'SimulationObject' containing all the necessary information for the simulation
 #' @param from lower value of gradient

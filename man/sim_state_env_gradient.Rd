@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_state_env_gradient.R
 \name{sim_state_env_gradient}
 \alias{sim_state_env_gradient}
-\title{Simulates a uniform state of the environment}
+\title{Simulates a gradiated state of the environment}
 \usage{
 sim_state_env_gradient(simulation_object, from = 0, to = 1)
 }
@@ -17,7 +17,7 @@ sim_state_env_gradient(simulation_object, from = 0, to = 1)
 An updated simulation object with the newly calculated state of the environment in the correct slot
 }
 \description{
-Simulates a uniform state of the environment
+Simulates a gradiated state of the environment
 }
 \examples{
 \dontrun{

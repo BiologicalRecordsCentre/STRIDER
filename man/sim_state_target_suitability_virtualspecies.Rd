@@ -7,7 +7,6 @@
 sim_state_target_suitability_virtualspecies(
   simulation_object,
   n_targets = 1,
-  prop_env = 1,
   params = NULL
 )
 }
@@ -15,8 +14,6 @@ sim_state_target_suitability_virtualspecies(
 \item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
 
 \item{n_targets}{numeric for the number of targets to generate}
-
-\item{prop_env}{numeric between 0 and 1 for the proportion of environmental variables to be randomly used for each virtual species}
 
 \item{params}{list of vectors providing parameters to be passed to each NMLR function call}
 }
