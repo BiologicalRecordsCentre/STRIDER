@@ -1,6 +1,8 @@
 
 # STRIDER (STate, effoRt, Identification/DEtection, Reporting)
 
+[![R-CMD-check](https://github.com/BiologicalRecordsCentre/STRIDER/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/BiologicalRecordsCentre/STRIDER/actions/workflows/R-CMD-check.yaml)
+
 ## What is STRIDER?
 
 STRIDER is an R package for facilitating the simulation of virtual
@@ -299,13 +301,13 @@ sim_obj@effort
     ## Simple feature collection with 4 features and 7 fields
     ## Geometry type: POINT
     ## Dimension:     XY
-    ## Bounding box:  xmin: 19.5 ymin: 0.5 xmax: 21.5 ymax: 20.5
+    ## Bounding box:  xmin: 21.5 ymin: 21.5 xmax: 27.5 ymax: 26.5
     ## CRS:           NA
     ##   sampler visit unit cell_id          geometry env suit_target_1 real_target_1
-    ## 1       1     1    1     890  POINT (19.5 0.5)  20           0.5             0
-    ## 2       1     1    2     890  POINT (19.5 0.5)  20           0.5             0
-    ## 3       2     1    1     292 POINT (21.5 20.5)  20           0.5             1
-    ## 4       2     1    2     292 POINT (21.5 20.5)  20           0.5             1
+    ## 1       1     1    1     268 POINT (27.5 21.5)  20           0.5             1
+    ## 2       1     1    2     268 POINT (27.5 21.5)  20           0.5             1
+    ## 3       2     1    1     112 POINT (21.5 26.5)  20           0.5             1
+    ## 4       2     1    2     112 POINT (21.5 26.5)  20           0.5             1
 
 All functions for simulating effort start with `sim_effort_`
 

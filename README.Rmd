@@ -13,6 +13,8 @@ library(sf)
 
 # STRIDER (STate, effoRt, Identification/DEtection, Reporting)
 
+[![R-CMD-check](https://github.com/BiologicalRecordsCentre/STRIDER/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/BiologicalRecordsCentre/STRIDER/actions/workflows/R-CMD-check.yaml)
+
 ## What is STRIDER?
 
 STRIDER is an R package for facilitating the simulation of virtual species and the subsequent sampling and reporting. Its development is motivated by the need to simulate citizen science data, alongside other biodiversity data sampling, to validate method development. The language is intentionally generic so uses terms such as 'target' to mean species, organisms or similar. The simulation is split into a series processes:
