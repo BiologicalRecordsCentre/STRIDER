@@ -12,7 +12,7 @@
 #' }
 sim_effort_uniform <- function(simulation_object, n_samplers = 1, n_visits = 1, n_sample_units=1, replace = FALSE) {
 
-  #which cells are visits
+  #which cells are visited
   state_target <- simulation_object@state_target_suitability
   visited_cells <- rep(sample(terra::cells(state_target), size = n_samplers*n_visits, replace = replace),each = n_sample_units)
 
