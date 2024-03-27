@@ -10,9 +10,10 @@
 #' }
 sim_report_fun <- function(sim_obj, fun, ...) {
   # apply the function
-  sim_obj <- fun(sim_obj, ...)
+  report <- fun(sim_obj, ...)
 
   # validity checks
 
+  sim_obj@report <- report
   sim_obj
 }

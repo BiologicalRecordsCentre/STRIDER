@@ -10,9 +10,10 @@
 #' }
 sim_effort_fun <- function(sim_obj, fun, ...) {
   # apply the function
-  sim_obj <- fun(sim_obj, ...)
+  effort <- fun(sim_obj, ...)
 
   # validity checks
 
+  sim_obj@effort <- effort
   sim_obj
 }

@@ -7,7 +7,7 @@
 #' \dontrun{
 #' sim_state_env_uniform(simulation_object, 0)
 #' }
-sim_state_env_uniform <- function(simulation_object, spatraster) {
+sim_state_env_byod <- function(simulation_object, spatraster) {
   background <- simulation_object@background
 
   #check that it is a SpatRaster

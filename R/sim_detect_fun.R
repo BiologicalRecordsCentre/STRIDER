@@ -10,9 +10,10 @@
 #' }
 sim_detect_fun <- function(sim_obj, fun, ...) {
   # apply the function
-  sim_obj <- fun(sim_obj, ...)
+  detections <- fun(sim_obj, ...)
 
   # validity checks
 
+  sim_obj@detect <- detections
   sim_obj
 }

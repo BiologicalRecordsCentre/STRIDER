@@ -10,9 +10,10 @@
 #' }
 sim_state_target_suitability_fun <- function(sim_obj, fun, ...) {
   # apply the function
-  sim_obj <- fun(sim_obj, ...)
+  suitability <- fun(sim_obj, ...)
 
   # validity checks
 
+  sim_obj@state_target_suitability <- suitability
   sim_obj
 }

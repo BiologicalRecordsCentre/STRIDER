@@ -10,9 +10,10 @@
 #' }
 sim_state_target_realise_fun <- function(sim_obj, fun, ...) {
   # apply the function
-  sim_obj <- fun(sim_obj, ...)
+  realised <- fun(sim_obj, ...)
 
   # validity checks
 
+  sim_obj@state_target_realised <- realised
   sim_obj
 }
