@@ -1,27 +1,44 @@
 
-*Edit `README.Rmd` not `README.md`*
-
 # STRIDER (STate, effoRt, Identification/DEtection, Reporting)
 
-## Overview
+## What is STRIDER?
 
-STRIDER is an R package for simulating virtual species and the
-subsequent sampling and reporting. It’s primary use is for simulating
-citizen science data to validate method development. The simulation is
-split into 4 processes:
+STRIDER is an R package for facilitating the simulation of virtual
+species and the subsequent sampling and reporting. Its development is
+motivated by the need to simulate citizen science data, alongside other
+biodiversity data sampling, to validate method development. The language
+is intentionally generic so uses terms such as ‘target’ to mean species,
+organisms or similar. The simulation is split into a series processes:
 
-- State: what is the true state of the simulated reality?
+- State: what is the state of the simulated reality?
   - Environment (e.g abiotic and biotic)
-  - Target (e.g. species) what may be dependant on the environment
+  - Target (e.g. species) suitability as a function of the environment
+  - Target realised state as a function of the target suitability
 - Effort: how is sampling effort allocated? (where/what/when are they
-  sampling? who is doing the sampling?)
-- Identification/Detection: what happens when the sampler meets the
-  species (is the species detected? is the species correctly
-  identified?)
+  sampling? Who/what is doing the sampling?)
+- Identification/Detection: what happens when a sampler encounters the
+  target (is the species detected? is the species correctly identified?)
 - Reporting: how is the interaction reported? (is the species recorded?
   Are absences recorded? At what spatial resolution is it reported at?)
 
 ![](diagrams/overview.drawio.svg)
+
+## Overview
+
+STRIDER provides a reproducible basis for all your simulation needs.
+There are 3 key components.
+
+Firstly, it provides a `SimulationObject` class with slots for each
+object describing each stage of the simulation workflow. This keeps
+everything in one R object that can be
+
+Secondly, STRIDER provides a series of functions to build up your
+simulation object. This includes both straightforward functions for
+common simulation approaches and the ability to bring your own
+data/functions.
+
+Thirdly, STRIDER will provide (in due course) example workflows that can
+be adapted and extended your to kick start your simulation work.
 
 ## Installation
 
@@ -32,6 +49,8 @@ Install from GitHub
 ## Requirements
 
 `terra`, `sf`
+
+`targets` is recommended for the pipeline/workflow management
 
 ## How to use the R package
 
@@ -67,7 +86,7 @@ outputs of any of the steps, ensuring flexibility and interoperability.
 The functions used at each stage are as follows:
 
 - `sim_state_env_...(simulation_object, ...)`
-- `sim_state_target_sutability...(simulation_object, ...)`
+- `sim_state_target_suitability...(simulation_object, ...)`
 - `sim_state_target_realise_...(simulation_object, ...)`
 - `sim_effort_...(simulation_object, ...)`
 - `sim_detect_...(simulation_object, ...)`
@@ -195,7 +214,7 @@ value in space.
 
 The BYOD (Bring Your Own Data) function is `sim_state_env_byod()` where
 you can provide a SpatRaster with custom environmental state that meets
-you needs.
+you needs and it will be added to the correct slot.
 
 ### Simulating the target state
 
@@ -280,25 +299,21 @@ sim_obj@effort
     ## Simple feature collection with 4 features and 7 fields
     ## Geometry type: POINT
     ## Dimension:     XY
-    ## Bounding box:  xmin: 8.5 ymin: 8.5 xmax: 25.5 ymax: 19.5
+    ## Bounding box:  xmin: 19.5 ymin: 0.5 xmax: 21.5 ymax: 20.5
     ## CRS:           NA
     ##   sampler visit unit cell_id          geometry env suit_target_1 real_target_1
-    ## 1       1     1    1     326 POINT (25.5 19.5)  20           0.5             0
-    ## 2       1     1    2     326 POINT (25.5 19.5)  20           0.5             0
-    ## 3       2     1    1     639   POINT (8.5 8.5)  20           0.5             1
-    ## 4       2     1    2     639   POINT (8.5 8.5)  20           0.5             1
+    ## 1       1     1    1     890  POINT (19.5 0.5)  20           0.5             0
+    ## 2       1     1    2     890  POINT (19.5 0.5)  20           0.5             0
+    ## 3       2     1    1     292 POINT (21.5 20.5)  20           0.5             1
+    ## 4       2     1    2     292 POINT (21.5 20.5)  20           0.5             1
 
 All functions for simulating effort start with `sim_effort_`
 
 The minimal function for this process is `sim_effort_uniform()` in which
 effort is uniformly distributed across the landscape.
 
-`sim_effort_weighted()` can be used to sample from the target state but
-weighted unequally across the environment (a weighting layer is provided
-as a SpatRaster)
-
-`sim_effort_byod()` can be used to bring your own data and sample but
-using specified locations
+<!--`sim_effort_weighted()` can be used to sample from the target state but weighted unequally across the environment (a weighting layer is provided as a SpatRaster)-->
+<!--`sim_effort_byod()` can be used to bring your own data and sample but using specified locations-->
 
 ## Simulating identification/detection
 
@@ -337,7 +352,49 @@ example:
 The minimal function for this process is `sim_report_equal()` in which
 all data is reported at equal probability.
 
-## Full example
+## Custom functions
+
+For each simulation stage there is a function ending in `..._fun.R`
+which means you can provide your own function to simulate that process.
+If there are different parameters that you want to provide to these
+functions you can pass them as other named arguments to the `..._fun()`
+function. For example if I want to use a custom function to produce a
+environmental suitability layer for a target, based on the environment I
+could do define the following function `suit_fun()`:
+
+``` r
+suit_fun <- function(sim_obj){
+  target_suitability <- sim_obj@background # use the background to 
+  terra::values(target_suitability) <- 0.2
+  names(target_suitability) <- "frog" #give my layer a name
+
+  # set suitability under certain critera eg. 0.7 when rainfall>500 and altitude < 50
+  target_suitability[sim_obj@state_env$rainfall>500 & sim_obj@state_env$altitude<50] <- 0.4
+  target_suitability[sim_obj@state_env$rainfall>800 & sim_obj@state_env$altitude<40] <- 0.9
+
+  target_suitability #return just the suitability layer
+}
+
+sim_obj <- sim_state_target_suitability_fun(sim_obj, fun = suit_fun)
+```
+
+This function must take the SimulationObject as its first argument. This
+means you’ve got access to all other simulation components. Therefore,
+if for example you wanted to your detection process to depend on the
+environment then you’d simply need to access it via the correct slot.
+
+The full list of these functions are as follows:
+
+- `sim_state_target_suitability_fun()`
+- `sim_state_target_realise_fun()`
+- `sim_effort_fun()`
+- `sim_detect_fun()`
+- `sim_report_fun()`
+
+## A complete minimal example
+
+Here is an example which runs through a very simple example and plots
+the output.
 
 ``` r
 library(STRIDER)
