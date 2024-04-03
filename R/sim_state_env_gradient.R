@@ -9,14 +9,15 @@
 #' sim_state_env_gradient(simulation_object, 0, 1)
 #' }
 sim_state_env_gradient <- function(simulation_object, from = 0, to = 1) {
+  simulation_object_original <- simulation_object <- read_sim_obj_rasters(simulation_object)
   background <- simulation_object@background
 
   sim_state <- background[[1]]
   terra::values(sim_state) <- rep(seq(from = from, to = to, length.out = dim(background)[2]), dim(background)[1])
   names(sim_state) <- "env"
 
-  simulation_object@state_env <- sim_state
+  simulation_object_original@state_env <- sim_state
 
   # Return the updated simulation_object
-  return(simulation_object)
+  return(simulation_object_original)
 }

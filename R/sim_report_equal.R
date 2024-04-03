@@ -9,6 +9,7 @@
 #' sim_report_equal(simulation_object, 0.5, "iRecord")
 #' }
 sim_report_equal <- function(simulation_object, prob = 1, platform = "iRecord") {
+  simulation_object_original <- simulation_object <- read_sim_obj_rasters(simulation_object)
   detect <- simulation_object@detect
 
   reports <- detect
@@ -18,8 +19,8 @@ sim_report_equal <- function(simulation_object, prob = 1, platform = "iRecord") 
 
   reports$platform <- platform
 
-  simulation_object@report <- reports
+  simulation_object_original@report <- reports
 
   # Return the updated simulation_object
-  return(simulation_object)
+  return(simulation_object_original)
 }

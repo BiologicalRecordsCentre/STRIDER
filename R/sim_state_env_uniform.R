@@ -8,14 +8,15 @@
 #' sim_state_env_uniform(simulation_object, 0)
 #' }
 sim_state_env_uniform <- function(simulation_object, value = 0) {
+  simulation_object_original <- simulation_object_original <- simulation_object <- read_sim_obj_rasters(simulation_object)
   background <- simulation_object@background
 
   sim_state <- background[[1]]
   terra::values(sim_state) <- value
   names(sim_state) <- "env"
 
-  simulation_object@state_env <- sim_state
+  simulation_object_original@state_env <- sim_state
 
   # Return the updated simulation_object
-  return(simulation_object)
+  return(simulation_object_original)
 }

@@ -11,6 +11,8 @@
 #' sim_effort_uniform(simulation_object, 100, 20,1 FALSE)
 #' }
 sim_effort_uniform <- function(simulation_object, n_samplers = 1, n_visits = 1, n_sample_units=1, replace = FALSE) {
+  simulation_object_original <- simulation_object <- read_sim_obj_rasters(simulation_object)
+
 
   #which cells are visited
   state_target <- simulation_object@state_target_suitability
@@ -34,8 +36,8 @@ sim_effort_uniform <- function(simulation_object, n_samplers = 1, n_visits = 1, 
   extracted_values <- terra::extract(simulation_object@state_target_realised,effort_sf$cell_id)
   effort_sf[,paste0("real_",names(extracted_values))] <- extracted_values
 
-  simulation_object@effort <- effort_sf
+  simulation_object_original@effort <- effort_sf
 
   # Return the updated simulation_object
-  return(simulation_object)
+  simulation_object_original
 }

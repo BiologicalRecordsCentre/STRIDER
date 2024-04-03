@@ -8,6 +8,7 @@
 #' sim_state_env_uniform(simulation_object, 0)
 #' }
 sim_state_env_byod <- function(simulation_object, spatraster) {
+  simulation_object_original <- simulation_object <- read_sim_obj_rasters(simulation_object)
   background <- simulation_object@background
 
   #check that it is a SpatRaster
@@ -23,8 +24,8 @@ sim_state_env_byod <- function(simulation_object, spatraster) {
     stop(paste0("@background has ",ncol(background)," columns whereas your provided SpatRaster has ",ncol(spatraster)," columns. Number of columns must be equal"))
   }
 
-  simulation_object@state_env <- spatraster
+  simulation_object_original@state_env <- spatraster
 
   # Return the updated simulation_object
-  return(simulation_object)
+  return(simulation_object_original)
 }

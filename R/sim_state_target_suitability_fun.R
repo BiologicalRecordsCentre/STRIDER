@@ -1,19 +1,21 @@
 #' Determines the state_target_suitability from state_env using a custom function
 #'
-#' @param sim_obj a SimulationObject
+#' @param simulation_object a SimulationObject
 #' @param fun a function that takes an environmental SpatRaster and outputs a suitability SpatRaster values from 0 to 1
 #' @param ... other parameters for the user supplied function fun
 #' @return A SimulationObject with a state_target_realised
 #' @examples
 #' \dontrun{
-#' sim_state_target_realise_fun(sim_obj, fun, ...)
+#' sim_state_target_realise_fun(simulation_object, fun, ...)
 #' }
-sim_state_target_suitability_fun <- function(sim_obj, fun, ...) {
+sim_state_target_suitability_fun <- function(simulation_object, fun, ...) {
+  simulation_object_original <- simulation_object <- read_sim_obj_rasters(simulation_object)
+
   # apply the function
-  suitability <- fun(sim_obj, ...)
+  suitability <- fun(simulation_object, ...)
 
   # validity checks
 
-  sim_obj@state_target_suitability <- suitability
-  sim_obj
+  simulation_object_original@state_target_suitability <- suitability
+  simulation_object_original
 }

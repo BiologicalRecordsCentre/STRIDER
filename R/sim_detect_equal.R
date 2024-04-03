@@ -8,6 +8,8 @@
 #' sim_detect_equal()
 #' }
 sim_detect_equal <- function(simulation_object, prob = 0.5) {
+  simulation_object_original <- simulation_object <- read_sim_obj_rasters(simulation_object)
+
   background <- simulation_object@background
   state_env <- simulation_object@state_env
   state_target <- simulation_object@state_target_realised
@@ -40,8 +42,8 @@ sim_detect_equal <- function(simulation_object, prob = 0.5) {
   }
 
   # Update simulation_object with the new results
-  simulation_object@detect <- detections_all
+  simulation_object_original@detect <- detections_all
 
   # Return the updated simulation_object
-  return(simulation_object)
+  simulation_object_original
 }
