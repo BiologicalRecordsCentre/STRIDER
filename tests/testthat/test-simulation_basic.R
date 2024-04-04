@@ -1,12 +1,14 @@
 library(STRIDER)
 
 # Create the background
-background <- terra::rast(matrix(0,1000,600))
+background <- terra::rast(matrix(0,440,700))
 
 # 1 Create the simulation object
-sim_obj <- SimulationObject(background = background)
+sim_obj1 <- SimulationObject(background = background)
 
-sim_obj <- sim_state_env_gradient(sim_obj)
+sim_obj1 <- sim_state_env_gradient(sim_obj1)
+sim_obj1@hash
+
 
 # 2 Simulate a uniform state of the target across the background within the simulation object
 sim_obj <- sim_state_target_suitability_uniform(sim_obj, value= 0.5,n_targets = 2)

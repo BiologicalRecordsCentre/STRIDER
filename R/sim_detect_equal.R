@@ -8,7 +8,8 @@
 #' sim_detect_equal()
 #' }
 sim_detect_equal <- function(simulation_object, prob = 0.5) {
-  simulation_object_original <- simulation_object <- read_sim_obj_rasters(simulation_object)
+  simulation_object_original <- simulation_object
+  simulation_object <- read_sim_obj_rasters(simulation_object)
 
   background <- simulation_object@background
   state_env <- simulation_object@state_env

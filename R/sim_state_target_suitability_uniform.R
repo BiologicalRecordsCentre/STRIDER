@@ -8,17 +8,24 @@
 #' \dontrun{
 #' sim_state_target_suitability_uniform(simulation_object, 0.5)
 #' }
-sim_state_target_suitability_uniform <- function(simulation_object, value = 0.5,n_targets=1) {
-  simulation_object_original <- simulation_object <- read_sim_obj_rasters(simulation_object)
+sim_state_target_suitability_uniform <- function(simulation_object, filename=NULL, value = 0.5,n_targets=1) {
+  simulation_object_original <- simulation_object
+  simulation_object <- read_sim_obj_rasters(simulation_object)
+
   background <- simulation_object@background
 
   sim_state <- rep(background[[1]],n_targets)
   for(i in 1:n_targets){
     terra::values(sim_state[[i]]) <- value
-
   }
 
   names(sim_state) <- paste0("target_",1:n_targets)
+
+  #save raster and return filename if filename isn't null
+  if(!is.null(filename)){
+    sim_state <- write_raster_return_filename(sim_state,filename)
+  }
+
   simulation_object_original@state_target_suitability <- sim_state
 
   # Return the updated simulation_object

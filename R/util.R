@@ -26,3 +26,13 @@ read_sim_obj_rasters <- function(sim_obj){
   #return the object
   sim_obj
 }
+
+#' Write the raster and return the filename
+#' @param x a SpatRaster
+#' @param filename The file name
+#' @param overwrite whether to overwrite existing file or not
+#' @noRd
+write_raster_return_filename <- function(x, filename,overwrite=T, ...){
+  writeRaster(x,filename,overwrite, ...)
+  filename
+}

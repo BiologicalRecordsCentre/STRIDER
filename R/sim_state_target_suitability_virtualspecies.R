@@ -5,7 +5,8 @@
 #' @param params list of vectors providing parameters to be passed to each NMLR function call
 #' @return An updated simulation object with the newly calculated state of the target in the correct slot
 sim_state_target_suitability_virtualspecies <- function(simulation_object, n_targets = 1, params = NULL) {
-  simulation_object_original <- simulation_object <- read_sim_obj_rasters(simulation_object)
+  simulation_object_original <- simulation_object
+  simulation_object <- read_sim_obj_rasters(simulation_object)
 
   background <- simulation_object@background
   environment <- simulation_object@state_env

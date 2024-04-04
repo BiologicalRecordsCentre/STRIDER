@@ -7,8 +7,10 @@
 #' \dontrun{
 #' sim_state_target_realised_threshold(simulation_object)
 #' }
-sim_state_target_realise_threshold <- function(simulation_object,threshold = 0.5) {
-  simulation_object_original <-simulation_object <- read_sim_obj_rasters(simulation_object)
+sim_state_target_realise_threshold <- function(simulation_object,filename=NULL,threshold = 0.5) {
+  simulation_object_original <- simulation_object
+  simulation_object <- read_sim_obj_rasters(simulation_object)
+
   state_target <- simulation_object@state_target_suitability
   binary_state_target <- state_target
 
@@ -20,6 +22,11 @@ sim_state_target_realise_threshold <- function(simulation_object,threshold = 0.5
     binary_values <- as.numeric(prob_values >= threshold)
 
     terra::values(binary_state_target[[i]]) <- binary_values
+  }
+
+  #save raster and return filename if filename isn't null
+  if(!is.null(filename)){
+    binary_state_target <- write_raster_return_filename(binary_state_target,filename)
   }
 
   # Update the SimulationObject with the binary state_target

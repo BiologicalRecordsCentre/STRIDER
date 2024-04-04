@@ -9,7 +9,8 @@
 #' sim_state_target_realise_fun(simulation_object, fun, ...)
 #' }
 sim_state_target_suitability_fun <- function(simulation_object, fun, ...) {
-  simulation_object_original <- simulation_object <- read_sim_obj_rasters(simulation_object)
+  simulation_object_original <- simulation_object
+  simulation_object <- read_sim_obj_rasters(simulation_object)
 
   # apply the function
   suitability <- fun(simulation_object, ...)
