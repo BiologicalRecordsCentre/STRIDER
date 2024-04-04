@@ -7,6 +7,7 @@
 #' sim_state_target_binary(simulation_object)
 #' }
 sim_state_target_realise_binomial <- function(simulation_object) {
+  #TODO
   simulation_object_original <- simulation_object
   simulation_object <- read_sim_obj_rasters(simulation_object)
 

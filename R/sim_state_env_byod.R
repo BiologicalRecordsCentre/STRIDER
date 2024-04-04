@@ -33,9 +33,7 @@ sim_state_env_byod <- function(simulation_object,filename = NULL, spatraster) {
   simulation_object_original@state_env <- spatraster
 
   #create hash, having set the hash to NULL
-  tmp <- read_sim_obj_rasters(simulation_object_original)
-  tmp@hash <- NULL
-  simulation_object_original@hash <- digest::digest(tmp)
+  simulation_object_original@hash <- hash_sim_obj(simulation_object_original)
 
   # Return the updated simulation_object
   return(simulation_object_original)

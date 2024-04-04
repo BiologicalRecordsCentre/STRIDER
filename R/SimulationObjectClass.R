@@ -24,9 +24,6 @@ SimulationObject <- function(background, state_env = NULL, state_target_suitabil
       report = report,
       hash = NULL)
 
-  #generate a hash
-  hash <- digest::digest(read_sim_obj_rasters(tmp))
-
   new("SimulationObject",
       background = background,
       state_env = state_env,
@@ -35,6 +32,6 @@ SimulationObject <- function(background, state_env = NULL, state_target_suitabil
       effort = effort,
       detect = detect,
       report = report,
-      hash = hash
+      hash = hash_sim_obj(tmp)
   )
 }

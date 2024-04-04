@@ -8,29 +8,23 @@
 #' sim_state_target_realised_threshold(simulation_object)
 #' }
 sim_state_target_realise_threshold <- function(simulation_object,filename=NULL,threshold = 0.5) {
-  simulation_object_original <- simulation_object
-  simulation_object <- read_sim_obj_rasters(simulation_object)
 
-  state_target <- simulation_object@state_target_suitability
-  binary_state_target <- state_target
+  threshold_fun<- function(simulation_object,threshold){
+    state_target <- binary_state_target <- simulation_object@state_target_suitability
+    for (i in 1:dim(state_target)[3]){
+      # Get the probability values from the state target
+      prob_values <- terra::values(state_target[[i]])
 
-  for (i in 1:dim(state_target)[3]){
-    # Get the probability values from the state target
-    prob_values <- terra::values(state_target[[i]])
+      # Simulate binary values from the binomial distribution based on the probability values
+      binary_values <- as.numeric(prob_values >= threshold)
 
-    # Simulate binary values from the binomial distribution based on the probability values
-    binary_values <- as.numeric(prob_values >= threshold)
-
-    terra::values(binary_state_target[[i]]) <- binary_values
+      terra::values(binary_state_target[[i]]) <- binary_values
+    }
+    binary_state_target
   }
 
-  #save raster and return filename if filename isn't null
-  if(!is.null(filename)){
-    binary_state_target <- write_raster_return_filename(binary_state_target,filename)
-  }
-
-  # Update the SimulationObject with the binary state_target
-  simulation_object_original@state_target_realised <- binary_state_target
-
-  simulation_object_original
+  sim_state_target_realise_fun(simulation_object,
+                               filename=filename,
+                               fun = threshold_fun,
+                               threshold=threshold)
 }
