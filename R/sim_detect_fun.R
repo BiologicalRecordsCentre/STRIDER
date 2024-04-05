@@ -18,5 +18,6 @@ sim_detect_fun <- function(simulation_object, fun, ...) {
   # validity checks
 
   simulation_object_original@detect <- detections
+  simulation_object_original@hash <- hash_sim_obj(simulation_object_original)
   simulation_object_original
 }

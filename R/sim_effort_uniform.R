@@ -39,5 +39,6 @@ sim_effort_uniform <- function(simulation_object, n_samplers = 1, n_visits = 1, 
   simulation_object_original@effort <- effort_sf
 
   # Return the updated simulation_object
+  simulation_object_original@hash <- hash_sim_obj(simulation_object_original)
   simulation_object_original
 }

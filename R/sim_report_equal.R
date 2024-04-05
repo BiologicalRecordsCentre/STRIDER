@@ -24,5 +24,6 @@ sim_report_equal <- function(simulation_object, prob = 1, platform = "iRecord") 
   simulation_object_original@report <- reports
 
   # Return the updated simulation_object
-  return(simulation_object_original)
+  simulation_object_original@hash <- hash_sim_obj(simulation_object_original)
+  simulation_object_original
 }

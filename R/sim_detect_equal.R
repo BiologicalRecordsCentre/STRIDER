@@ -46,5 +46,6 @@ sim_detect_equal <- function(simulation_object, prob = 0.5) {
   simulation_object_original@detect <- detections_all
 
   # Return the updated simulation_object
+  simulation_object_original@hash <- hash_sim_obj(simulation_object_original)
   simulation_object_original
 }
