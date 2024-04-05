@@ -11,8 +11,7 @@
 sim_state_env_gradient <- function(simulation_object, filename=NULL, from = 0, to = 1) {
 
   #create the gradient spatraster
-  simulation_object <- read_sim_obj_rasters(simulation_object)
-  background <- simulation_object@background
+  background <- read_sim_obj_rasters(simulation_object)@background
   sim_state <- background[[1]]
   terra::values(sim_state) <- rep(seq(from = from, to = to, length.out = dim(background)[2]), dim(background)[1])
   names(sim_state) <- "env"
