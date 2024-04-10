@@ -87,12 +87,12 @@ outputs of any of the steps, ensuring flexibility and interoperability.
 
 The functions used at each stage are as follows:
 
-- `sim_state_env_...(simulation_object, ...)`
-- `sim_state_target_suitability...(simulation_object, ...)`
-- `sim_state_target_realise_...(simulation_object, ...)`
-- `sim_effort_...(simulation_object, ...)`
-- `sim_detect_...(simulation_object, ...)`
-- `sim_report_...(simulation_object, ...)`
+- `sim_state_env(simulation_object, ...)`
+- `sim_state_target_suitability(simulation_object, ...)`
+- `sim_state_target_realise(simulation_object, ...)`
+- `sim_effort(simulation_object, ...)`
+- `sim_detect(simulation_object, ...)`
+- `sim_report(simulation_object, ...)`
 
 You could use the `targets` R package to create reproducible workflows
 for simulating your data.
@@ -144,7 +144,7 @@ background <- terra::rast(matrix(0,30,30))
 
 # Create the simulation object
 sim_obj <- SimulationObject(background = background)
-sim_obj <- sim_state_env_uniform(sim_obj,value = 20)
+sim_obj <- sim_state_env(sim_obj,fun = "uniform",value = 20)
 sim_obj
 ```
 
@@ -185,6 +185,9 @@ sim_obj
     ## 
     ## Slot "report":
     ## NULL
+    ## 
+    ## Slot "hash":
+    ## [1] "02770d7a1351d2b3c355c14ad2ebe33a"
 
 ### Simulating the environmental state
 
@@ -207,16 +210,16 @@ variables then the best current implementation is to create a simulation
 object for each time step, sample from each time step, sample from each
 time step, then aggregate later.
 
-All functions for simulating environmental state start with
-`sim_state_env_`
+The function for simulating environmental state is `sim_state_env`
 
-The minimal version of this function is `sim_state_env_uniform()` which
-produces a simulation object with a single layer which is uniform in
-value in space.
+The minimal version of this function is `sim_state_env(fun="uniform")`
+which produces a simulation object with a single layer which is uniform
+in value in space.
 
-The BYOD (Bring Your Own Data) function is `sim_state_env_byod()` where
-you can provide a SpatRaster with custom environmental state that meets
-you needs and it will be added to the correct slot.
+The BYOD (Bring Your Own Data) function is
+`sim_state_env(spatraster = [your_raster])` where you can provide a
+SpatRaster with custom environmental state that meets you needs and it
+will be added to the correct slot.
 
 ### Simulating the target state
 
@@ -235,14 +238,14 @@ target to change over time then create a list of rasters where each list
 item represents the target state at each time step, but this will need
 some wrangling.
 
-All functions for simulating target state start with
+The function for simulating target state is
 `sim_state_target_suitability`
 
 The minimal version of this function is
-`sim_state_target_suitability_uniform()` which produces a uniform
+`sim_state_target_suitability(fun="uniform")` which produces a uniform
 abundance across space.
 
-The BYOD function is `sim_state_target_byod()` (NOT IMPLEMENTED YET)
+The BYOD function is `sim_state_target(fun=[your custom functio])`
 meaning you could also use other packages to generate a target state
 (eg.rangeshiftR, virtualspecies) then convert the output to a
 `SpatRaster`.
@@ -294,25 +297,25 @@ target present).
 
 ``` r
 # Simulate the sampling effort
-sim_obj <- sim_effort_uniform(sim_obj, n_samplers=2, n_visits = 1, n_sample_units = 2)
+sim_obj <- sim_effort(sim_obj,fun = "uniform", n_samplers=2, n_visits = 1, n_sample_units = 2)
 sim_obj@effort
 ```
 
     ## Simple feature collection with 4 features and 7 fields
     ## Geometry type: POINT
     ## Dimension:     XY
-    ## Bounding box:  xmin: 21.5 ymin: 21.5 xmax: 27.5 ymax: 26.5
+    ## Bounding box:  xmin: 11.5 ymin: 29.5 xmax: 14.5 ymax: 29.5
     ## CRS:           NA
     ##   sampler visit unit cell_id          geometry env suit_target_1 real_target_1
-    ## 1       1     1    1     268 POINT (27.5 21.5)  20           0.5             1
-    ## 2       1     1    2     268 POINT (27.5 21.5)  20           0.5             1
-    ## 3       2     1    1     112 POINT (21.5 26.5)  20           0.5             1
-    ## 4       2     1    2     112 POINT (21.5 26.5)  20           0.5             1
+    ## 1       1     1    1      15 POINT (14.5 29.5)  20           0.5             1
+    ## 2       1     1    2      15 POINT (14.5 29.5)  20           0.5             1
+    ## 3       2     1    1      12 POINT (11.5 29.5)  20           0.5             1
+    ## 4       2     1    2      12 POINT (11.5 29.5)  20           0.5             1
 
-All functions for simulating effort start with `sim_effort_`
+The function for simulating effort start is `sim_effort`
 
-The minimal function for this process is `sim_effort_uniform()` in which
-effort is uniformly distributed across the landscape.
+The minimal function for this process is `sim_effort(fun="uniform")` in
+which effort is uniformly distributed across the landscape.
 
 <!--`sim_effort_weighted()` can be used to sample from the target state but weighted unequally across the environment (a weighting layer is provided as a SpatRaster)-->
 <!--`sim_effort_byod()` can be used to bring your own data and sample but using specified locations-->
@@ -333,8 +336,8 @@ step involves correctly identifying the observed organism to the
 appropriate taxonomic group or species. Samplers may not always identify
 a target correctly and these functions may take confusion matrices.
 
-The minimal function for this process is `sim_detect_equal()` in which
-all targets are detected at equal probability.
+The minimal function for this process is `sim_detect(fun="equal")` in
+which all targets are detected at equal probability.
 
 ## Simulating the reporting
 
@@ -351,15 +354,14 @@ example:
 - Only interesting or novel species are reported (eg. as a result of
   life listing)
 
-The minimal function for this process is `sim_report_equal()` in which
-all data is reported at equal probability.
+The minimal function for this process is `sim_report(fun="equal")` in
+which all data is reported at equal probability.
 
 ## Custom functions
 
-For each simulation stage there is a function ending in `..._fun.R`
-which means you can provide your own function to simulate that process.
-If there are different parameters that you want to provide to these
-functions you can pass them as other named arguments to the `..._fun()`
+For each simulation stage you can provide your own function to simulate
+that process. If there are different parameters that you want to provide
+to these functions you can pass them as other named arguments to the
 function. For example if I want to use a custom function to produce a
 environmental suitability layer for a target, based on the environment I
 could do define the following function `suit_fun()`:
@@ -377,21 +379,13 @@ suit_fun <- function(sim_obj){
   target_suitability #return just the suitability layer
 }
 
-sim_obj <- sim_state_target_suitability_fun(sim_obj, fun = suit_fun)
+sim_obj <- sim_state_target_suitability(sim_obj, fun = suit_fun)
 ```
 
 This function must take the SimulationObject as its first argument. This
 means you’ve got access to all other simulation components. Therefore,
 if for example you wanted to your detection process to depend on the
 environment then you’d simply need to access it via the correct slot.
-
-The full list of these functions are as follows:
-
-- `sim_state_target_suitability_fun()`
-- `sim_state_target_realise_fun()`
-- `sim_effort_fun()`
-- `sim_detect_fun()`
-- `sim_report_fun()`
 
 ## A complete minimal example
 
@@ -410,22 +404,22 @@ background <- terra::rast(matrix(0,30,30))
 sim_obj <- SimulationObject(background = background)
 
 # Simulate the environment state
-sim_obj <- sim_state_env_gradient(sim_obj)
+sim_obj <- sim_state_env(sim_obj,fun="gradient")
 
 # Simulate the target state
-sim_obj <- sim_state_target_suitability_uniform(sim_obj, value = 0.5)
+sim_obj <- sim_state_target_suitability(sim_obj,fun = "uniform", value = 0.5)
 
 #realise the state
-sim_obj <- sim_state_target_realise_binomial(sim_obj)
+sim_obj <- sim_state_target_realise(sim_obj,fun = "binomial")
 
 # Simulate the sampling effort
-sim_obj <- sim_effort_uniform(sim_obj, n_visits = 100, replace = FALSE)
+sim_obj <- sim_effort(sim_obj,fun = "uniform", n_visits = 100, replace = FALSE)
 
 # Simulate the detection
-sim_obj <- sim_detect_equal(sim_obj, prob = 0.5)
+sim_obj <- sim_detect(sim_obj,fun = "equal", prob = 0.5)
 
 # Simulate the reporting
-sim_obj <- sim_report_equal(sim_obj, prob = 0.8, platform = "iRecord")
+sim_obj <- sim_report(sim_obj,fun = "equal", prob = 0.8, platform = "iRecord")
 
 plot(sim_obj@state_target_realised) # State of the target
 plot(sim_obj@effort$geometry, add = TRUE,pch=16) # Effort

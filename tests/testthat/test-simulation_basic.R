@@ -7,23 +7,23 @@ background <- terra::rast(matrix(0,440,700))
 sim_obj <- SimulationObject(background = background)
 
 # 2 Simulate a uniform state of the target across the background within the simulation object
-sim_obj <- sim_state_env_uniform(sim_obj, value = 0.6)
+sim_obj <- sim_state_env(sim_obj, fun = "uniform", value = 0.6)
 
 # 2 Simulate a uniform state of the target across the background within the simulation object
-sim_obj <- sim_state_target_suitability_uniform(sim_obj, value= 0.5,n_targets = 2)
+sim_obj <- sim_state_target_suitability(sim_obj, fun="uniform", value= 0.5,n_targets = 2)
 
 # 2.5 realise the distribution
-sim_obj <- sim_state_target_realise_threshold(sim_obj,threshold = 0.5)
-sim_state_target_realise_binomial(sim_obj)
+sim_obj <- sim_state_target_realise(sim_obj,fun = "threshold",threshold = 0.5)
+sim_state_target_realise(sim_obj, fun = "binomial")
 
 # 3 Simulate effort across the landscape within the simulation object
-sim_obj <- sim_effort_uniform(sim_obj, n_samplers = 2, n_visits = 3, n_sample_units=2, replace = FALSE)
+sim_obj <- sim_effort(sim_obj,fun="uniform", n_samplers = 2, n_visits = 3, n_sample_units=2, replace = FALSE)
 
 # 4 Simulate detection within the simulation object
-sim_obj <- sim_detect_equal(sim_obj, prob = 0.5)
+sim_obj <- sim_detect(sim_obj,fun="equal", prob = 0.5)
 
 # 5 Simulate reporting within the simulation object
-sim_obj <- sim_report_equal(sim_obj, prob = 0.8, platform = "iRecord")
+sim_obj <- sim_report(sim_obj, fun="equal", prob = 0.8, platform = "iRecord")
 
 #print(sim_obj)
 

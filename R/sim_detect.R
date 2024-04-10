@@ -8,9 +8,16 @@
 #' \dontrun{
 #' sim_effort_fun(simulation_object, fun, ...)
 #' }
-sim_detect_fun <- function(simulation_object, fun, ...) {
+sim_detect <- function(simulation_object, fun, ...) {
   simulation_object_original <- simulation_object
   simulation_object <- read_sim_obj_rasters(simulation_object)
+
+  if(is.character(fun)){
+    if(!(fun %in% c("equal"))){
+      stop("Provided function must be 'equal'")
+    }
+    fun <- get(paste0("detect_",fun))
+  }
 
   # apply the function
   detections <- fun(simulation_object, ...)
