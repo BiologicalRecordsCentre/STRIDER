@@ -10,7 +10,7 @@ sim_obj <- SimulationObject(background = background)
 env_byod <- c(terra::rast(matrix(1:1000,1000,600)),terra::rast(matrix(round(runif(1000*600)*100),1000,600)))
 names(env_byod) <- c("rainfall","altitude")
 
-sim_obj <- sim_state_env_byod(sim_obj,spatraster =  env_byod)
+sim_obj <- sim_state_env(sim_obj,spatraster =  env_byod)
 
 # 2 Simulate a uniform state of the target across the background within the simulation object
 suit_fun <- function(sim_obj){
