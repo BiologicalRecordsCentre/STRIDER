@@ -104,7 +104,7 @@ background <- terra::rast(matrix(0,30,30))
 
 # Create the simulation object
 sim_obj <- SimulationObject(background = background)
-sim_obj <- sim_state_env_uniform(sim_obj,value = 20)
+sim_obj <- sim_state_env(sim_obj,fun = "uniform",value = 20)
 sim_obj
 ```
 
@@ -129,8 +129,8 @@ The BYOD (Bring Your Own Data) function is `sim_state_env_byod()` where you can 
 Here we define the state of the target or targets. We define two versions of this: a continuous variable representing a probability of occurrence (slot `@state_target`), and a realised absolute value (slot `@state_target_realised`) which could contain a binary (0 or 1) representing species occupancy or a positive integer representing abundance. Here's an example: 
 
 ```{r realisation_diagram, echo=F}
-sim_obj <- sim_state_target_suitability_uniform(sim_obj)
-sim_obj <- sim_state_target_realise_binomial(sim_obj)
+sim_obj <- sim_state_target_suitability(sim_obj,fun = "uniform")
+sim_obj <- sim_state_target_realise(sim_obj,fun = "binomial")
 par(mfrow=c(1,2))
 plot(sim_obj@state_target_suitability,main = "@state_target_suitability")
 plot(sim_obj@state_target_realised,main = "@state_target_realised")
@@ -175,7 +175,7 @@ Here's a very basic example where we generate effort comprising of two samplers,
  
 ```{r sampling data}
 # Simulate the sampling effort
-sim_obj <- sim_effort_uniform(sim_obj, n_samplers=2, n_visits = 1, n_sample_units = 2)
+sim_obj <- sim_effort(sim_obj,fun = "uniform", n_samplers=2, n_visits = 1, n_sample_units = 2)
 sim_obj@effort
 ```
  
@@ -224,7 +224,7 @@ suit_fun <- function(sim_obj){
   target_suitability #return just the suitability layer
 }
 
-sim_obj <- sim_state_target_suitability_fun(sim_obj, fun = suit_fun)
+sim_obj <- sim_state_target_suitability(sim_obj, fun = suit_fun)
 ```
 
 This function must take the SimulationObject as its first argument. This means you've got access to all other simulation components. Therefore, if for example you wanted to your detection process to depend on the environment then you'd simply need to access it via the correct slot.
@@ -253,22 +253,22 @@ background <- terra::rast(matrix(0,30,30))
 sim_obj <- SimulationObject(background = background)
 
 # Simulate the environment state
-sim_obj <- sim_state_env_gradient(sim_obj)
+sim_obj <- sim_state_env(sim_obj,fun="gradient")
 
 # Simulate the target state
-sim_obj <- sim_state_target_suitability_uniform(sim_obj, value = 0.5)
+sim_obj <- sim_state_target_suitability(sim_obj,fun = "uniform", value = 0.5)
 
 #realise the state
-sim_obj <- sim_state_target_realise_binomial(sim_obj)
+sim_obj <- sim_state_target_realise(sim_obj,fun = "binomial")
 
 # Simulate the sampling effort
-sim_obj <- sim_effort_uniform(sim_obj, n_visits = 100, replace = FALSE)
+sim_obj <- sim_effort(sim_obj,fun = "uniform", n_visits = 100, replace = FALSE)
 
 # Simulate the detection
-sim_obj <- sim_detect_equal(sim_obj, prob = 0.5)
+sim_obj <- sim_detect(sim_obj,fun = "equal", prob = 0.5)
 
 # Simulate the reporting
-sim_obj <- sim_report_equal(sim_obj, prob = 0.8, platform = "iRecord")
+sim_obj <- sim_report(sim_obj,fun = "equal", prob = 0.8, platform = "iRecord")
 
 plot(sim_obj@state_target_realised) # State of the target
 plot(sim_obj@effort$geometry, add = TRUE,pch=16) # Effort

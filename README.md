@@ -144,7 +144,7 @@ background <- terra::rast(matrix(0,30,30))
 
 # Create the simulation object
 sim_obj <- SimulationObject(background = background)
-sim_obj <- sim_state_env_uniform(sim_obj,value = 20)
+sim_obj <- sim_state_env(sim_obj,fun = "uniform",value = 20)
 sim_obj
 ```
 
@@ -185,6 +185,9 @@ sim_obj
     ## 
     ## Slot "report":
     ## NULL
+    ## 
+    ## Slot "hash":
+    ## [1] "02770d7a1351d2b3c355c14ad2ebe33a"
 
 ### Simulating the environmental state
 
@@ -294,20 +297,20 @@ target present).
 
 ``` r
 # Simulate the sampling effort
-sim_obj <- sim_effort_uniform(sim_obj, n_samplers=2, n_visits = 1, n_sample_units = 2)
+sim_obj <- sim_effort(sim_obj,fun = "uniform", n_samplers=2, n_visits = 1, n_sample_units = 2)
 sim_obj@effort
 ```
 
     ## Simple feature collection with 4 features and 7 fields
     ## Geometry type: POINT
     ## Dimension:     XY
-    ## Bounding box:  xmin: 21.5 ymin: 21.5 xmax: 27.5 ymax: 26.5
+    ## Bounding box:  xmin: 9.5 ymin: 24.5 xmax: 18.5 ymax: 26.5
     ## CRS:           NA
     ##   sampler visit unit cell_id          geometry env suit_target_1 real_target_1
-    ## 1       1     1    1     268 POINT (27.5 21.5)  20           0.5             1
-    ## 2       1     1    2     268 POINT (27.5 21.5)  20           0.5             1
-    ## 3       2     1    1     112 POINT (21.5 26.5)  20           0.5             1
-    ## 4       2     1    2     112 POINT (21.5 26.5)  20           0.5             1
+    ## 1       1     1    1     160  POINT (9.5 24.5)  20           0.5             1
+    ## 2       1     1    2     160  POINT (9.5 24.5)  20           0.5             1
+    ## 3       2     1    1     109 POINT (18.5 26.5)  20           0.5             0
+    ## 4       2     1    2     109 POINT (18.5 26.5)  20           0.5             0
 
 All functions for simulating effort start with `sim_effort_`
 
@@ -377,7 +380,7 @@ suit_fun <- function(sim_obj){
   target_suitability #return just the suitability layer
 }
 
-sim_obj <- sim_state_target_suitability_fun(sim_obj, fun = suit_fun)
+sim_obj <- sim_state_target_suitability(sim_obj, fun = suit_fun)
 ```
 
 This function must take the SimulationObject as its first argument. This
@@ -410,22 +413,22 @@ background <- terra::rast(matrix(0,30,30))
 sim_obj <- SimulationObject(background = background)
 
 # Simulate the environment state
-sim_obj <- sim_state_env_gradient(sim_obj)
+sim_obj <- sim_state_env(sim_obj,fun="gradient")
 
 # Simulate the target state
-sim_obj <- sim_state_target_suitability_uniform(sim_obj, value = 0.5)
+sim_obj <- sim_state_target_suitability(sim_obj,fun = "uniform", value = 0.5)
 
 #realise the state
-sim_obj <- sim_state_target_realise_binomial(sim_obj)
+sim_obj <- sim_state_target_realise(sim_obj,fun = "binomial")
 
 # Simulate the sampling effort
-sim_obj <- sim_effort_uniform(sim_obj, n_visits = 100, replace = FALSE)
+sim_obj <- sim_effort(sim_obj,fun = "uniform", n_visits = 100, replace = FALSE)
 
 # Simulate the detection
-sim_obj <- sim_detect_equal(sim_obj, prob = 0.5)
+sim_obj <- sim_detect(sim_obj,fun = "equal", prob = 0.5)
 
 # Simulate the reporting
-sim_obj <- sim_report_equal(sim_obj, prob = 0.8, platform = "iRecord")
+sim_obj <- sim_report(sim_obj,fun = "equal", prob = 0.8, platform = "iRecord")
 
 plot(sim_obj@state_target_realised) # State of the target
 plot(sim_obj@effort$geometry, add = TRUE,pch=16) # Effort
