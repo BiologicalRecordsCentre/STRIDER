@@ -13,8 +13,8 @@ sim_obj <- sim_state_env(sim_obj, fun = "uniform", value = 0.6)
 sim_obj <- sim_state_target_suitability(sim_obj, fun="uniform", value= 0.5,n_targets = 2)
 
 # 2.5 realise the distribution
-sim_obj <- sim_state_target_realise_threshold(sim_obj,threshold = 0.5)
-sim_state_target_realise_binomial(sim_obj)
+sim_obj <- sim_state_target_realise(sim_obj,fun = "threshold",threshold = 0.5)
+sim_state_target_realise(sim_obj, fun = "binomial")
 
 # 3 Simulate effort across the landscape within the simulation object
 sim_obj <- sim_effort_uniform(sim_obj, n_samplers = 2, n_visits = 3, n_sample_units=2, replace = FALSE)

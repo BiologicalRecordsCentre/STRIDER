@@ -32,9 +32,9 @@ test_that("Testing hashing at environment suitability simulation",{
 
 
 # state suitability
-sim_obj1_thresh <- sim_state_target_realise_threshold(sim_obj1, threshold = 0.5000)
-sim_obj2_thresh <- sim_state_target_realise_threshold(sim_obj2, threshold = 0.5)
-sim_obj3_thresh <- sim_state_target_realise_threshold(sim_obj2, threshold = 0.6)
+sim_obj1_thresh <- sim_state_target_realise(sim_obj1, fun = "threshold", threshold = 0.5000)
+sim_obj2_thresh <- sim_state_target_realise(sim_obj2, fun = "threshold", threshold = 0.5)
+sim_obj3_thresh <- sim_state_target_realise(sim_obj2, fun = "threshold", threshold = 0.6)
 
 test_that("Testing hashing at environment suitability simulation - threshold",{
   expect_true(sim_obj1_thresh@hash == sim_obj2_thresh@hash)
@@ -42,9 +42,9 @@ test_that("Testing hashing at environment suitability simulation - threshold",{
 })
 
 # state suitability
-sim_obj1_bin <- sim_state_target_realise_binomial(sim_obj1)
-sim_obj2_bin <- sim_state_target_realise_binomial(sim_obj2)
-sim_obj3_bin <- sim_state_target_realise_binomial(sim_obj2)
+sim_obj1_bin <- sim_state_target_realise(sim_obj1, fun = "binomial")
+sim_obj2_bin <- sim_state_target_realise(sim_obj2, fun = "binomial")
+sim_obj3_bin <- sim_state_target_realise(sim_obj2, fun = "binomial")
 
 test_that("Testing hashing at environment suitability simulation - Ensure that the hash changes",{
   expect_false(sim_obj1_bin@hash == sim_obj2_bin@hash)

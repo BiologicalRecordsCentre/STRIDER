@@ -76,3 +76,33 @@ state_target_suitability_virtsp <- function(simulation_object, n_targets = 1, pa
   # Return the updated simulation_object
   return(simulation_object_original)
 }
+
+
+state_target_realise_binomial <- function(simulation_object){
+  state_target <- binary_state_target <- simulation_object@state_target_suitability
+  for (i in 1:dim(state_target)[3]){
+    # Get the probability values from the state target
+    prob_values <- terra::values(state_target[[i]])
+
+    # Simulate binary values from the binomial distribution based on the probability values
+    binary_values <- rbinom(length(prob_values), 1, prob_values)
+
+    terra::values(binary_state_target[[i]]) <- binary_values
+  }
+  binary_state_target
+}
+
+
+state_target_realise_threshold <- function(simulation_object,threshold){
+  state_target <- binary_state_target <- simulation_object@state_target_suitability
+  for (i in 1:dim(state_target)[3]){
+    # Get the probability values from the state target
+    prob_values <- terra::values(state_target[[i]])
+
+    # Simulate binary values from the binomial distribution based on the probability values
+    binary_values <- as.numeric(prob_values >= threshold)
+
+    terra::values(binary_state_target[[i]]) <- binary_values
+  }
+  binary_state_target
+}

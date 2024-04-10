@@ -33,7 +33,7 @@ realise_fun <- function(sim_obj){
 }
 
 # 2.5 realise the distribution
-sim_obj <- sim_state_target_realise_fun(sim_obj,fun = realise_fun)
+sim_obj <- sim_state_target_realise(sim_obj,fun = realise_fun)
 
 # 3 Simulate effort across the landscape within the simulation object
 sim_obj <- sim_effort_uniform(sim_obj, n_samplers = 2, n_visits = 3, n_sample_units=2, replace = FALSE)
