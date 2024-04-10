@@ -106,3 +106,73 @@ state_target_realise_threshold <- function(simulation_object,threshold){
   }
   binary_state_target
 }
+
+
+
+effort_uniform <- function(simulation_object, n_samplers = 1, n_visits = 1, n_sample_units=1, replace = FALSE) {
+
+  #which cells are visited
+  state_target <- simulation_object@state_target_suitability
+  visited_cells <- rep(sample(terra::cells(state_target), size = n_samplers*n_visits, replace = replace),each = n_sample_units)
+
+  # capture data
+  sim_effort_points <- as.data.frame(terra::xyFromCell(state_target, visited_cells))
+  sim_effort_points$sampler <- rep(1:n_samplers,each = n_visits*n_sample_units)
+  sim_effort_points$visit <- rep(1:n_visits,n_samplers,each = n_sample_units)
+  sim_effort_points$unit <- rep(1:n_sample_units,n_samplers*n_visits)
+
+  sim_effort_points$cell_id <- visited_cells
+
+  effort_sf <- sf::st_as_sf(sim_effort_points, coords = c("x", "y"), crs = terra::crs(state_target))
+
+  #get values from env, suitability, realised
+  extracted_values <- terra::extract(simulation_object@state_env,effort_sf$cell_id)
+  effort_sf[,names(extracted_values)] <- extracted_values
+  extracted_values <- terra::extract(simulation_object@state_target_suitability,effort_sf$cell_id)
+  effort_sf[,paste0("suit_",names(extracted_values))] <- extracted_values
+  extracted_values <- terra::extract(simulation_object@state_target_realised,effort_sf$cell_id)
+  effort_sf[,paste0("real_",names(extracted_values))] <- extracted_values
+
+  effort_sf
+
+}
+
+
+
+
+detect_equal <- function(simulation_object, prob = 0.5) {
+
+  background <- simulation_object@background
+  state_env <- simulation_object@state_env
+  state_target <- simulation_object@state_target_realised
+  effort <- simulation_object@effort
+
+  detections_all <- data.frame()
+
+  #how many targets states are there?
+  if(length(dim(state_target))<3){
+    n_targets <- 1
+  } else {
+    n_targets <- dim(state_target)[3]
+  }
+
+  #loop through each of the targets
+  for (i in 1:n_targets) {
+    detections <- effort
+    detections$target <- i
+
+    detections$state_realised <- unname(terra::extract(state_target[[i]], effort,ID=F,raw=T))
+
+    #detect based probability value provided as argument
+    detections$detected <- detections$state_realised * (runif(nrow(detections)) < prob)
+
+    #in this basic example all are identified correctly
+    detections$identified_as <- detections$target
+    detections$identified_correct <- detections$identified_as==detections$target
+
+    detections_all <- rbind(detections_all, detections)
+  }
+
+  # Update simulation_object with the new results
+  detections_all
+}
