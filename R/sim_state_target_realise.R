@@ -28,6 +28,9 @@ sim_state_target_realise <- function(simulation_object,fun, filename=NULL, ...) 
     realised <- write_raster_return_filename(realised,filename)
   }
 
+  fun_args <- as.list(match.call())
+  simulation_object_original@metadata[["state_target_realised"]] <- fun_args[3:length(fun_args)]
+
   simulation_object_original@state_target_realised <- realised
   simulation_object_original@hash <- hash_sim_obj(simulation_object_original)
   simulation_object_original
