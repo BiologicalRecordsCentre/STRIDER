@@ -8,6 +8,7 @@ setClass("SimulationObject",
            effort = "ANY",
            detect = "ANY",
            report = "ANY",
+           metadata = "ANY",
            hash = "ANY"
          )
 )
@@ -22,6 +23,7 @@ SimulationObject <- function(background, state_env = NULL, state_target_suitabil
       effort = effort,
       detect = detect,
       report = report,
+      metadata = list(),
       hash = NULL)
 
   new("SimulationObject",
@@ -32,6 +34,7 @@ SimulationObject <- function(background, state_env = NULL, state_target_suitabil
       effort = effort,
       detect = detect,
       report = report,
+      metadata = list(),
       hash = hash_sim_obj(tmp)
   )
 }

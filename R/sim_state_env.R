@@ -55,6 +55,10 @@ sim_state_env <- function(simulation_object, fun= NULL, filename = NULL, spatras
   #create hash, having set the hash to NULL
   simulation_object_original@hash <- hash_sim_obj(simulation_object_original)
 
+  #set metadata
+  fun_args <- as.list(match.call())
+  simulation_object_original@metadata[["state_env"]] <- fun_args[3:length(fun_args)]
+
   # Return the updated simulation_object
   return(simulation_object_original)
 }

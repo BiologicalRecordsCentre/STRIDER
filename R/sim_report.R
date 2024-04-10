@@ -23,6 +23,8 @@ sim_report <- function(simulation_object, fun, ...) {
   report <- fun(simulation_object, ...)
 
   # validity checks
+  fun_args <- as.list(match.call())
+  simulation_object_original@metadata[["report"]] <- fun_args[3:length(fun_args)]
 
   simulation_object_original@report <- report
   simulation_object_original@hash <- hash_sim_obj(simulation_object_original)

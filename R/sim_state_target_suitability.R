@@ -28,6 +28,9 @@ sim_state_target_suitability <- function(simulation_object,fun,filename = NULL, 
     suitability <- write_raster_return_filename(suitability,filename)
   }
 
+  fun_args <- as.list(match.call())
+  simulation_object_original@metadata[["state_target_suitability"]] <- fun_args[3:length(fun_args)]
+
   simulation_object_original@state_target_suitability <- suitability
   simulation_object_original@hash <- hash_sim_obj(simulation_object_original)
   simulation_object_original
