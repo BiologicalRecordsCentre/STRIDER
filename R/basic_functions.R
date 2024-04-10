@@ -176,3 +176,17 @@ detect_equal <- function(simulation_object, prob = 0.5) {
   # Update simulation_object with the new results
   detections_all
 }
+
+
+report_equal <- function(simulation_object, prob = 1, platform = "iRecord") {
+  detect <- simulation_object@detect
+
+  reports <- detect
+  reports$reported <- runif(nrow(reports)) < prob
+
+  reports$reported[reports$detected == FALSE] <- FALSE
+
+  reports$platform <- platform
+
+  reports
+}

@@ -42,7 +42,7 @@ sim_obj <- sim_effort(sim_obj,fun="uniform", n_samplers = 2, n_visits = 3, n_sam
 sim_obj <- sim_detect(sim_obj,fun="equal", prob = 0.5)
 
 # 5 Simulate reporting within the simulation object
-sim_obj <- sim_report_equal(sim_obj, prob = 0.8, platform = "iRecord")
+sim_obj <- sim_report(sim_obj, fun="equal", prob = 0.8, platform = "iRecord")
 
 sim_obj
 

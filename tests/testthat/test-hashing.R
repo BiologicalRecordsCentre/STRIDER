@@ -63,7 +63,7 @@ test_that("Ensure that the hash changes after detection simulation",{
   expect_false(sim_obj1_effort@hash == sim_obj1_detect@hash)
 })
 
-sim_obj1_report <- sim_report_equal(sim_obj1_detect)
+sim_obj1_report <- sim_report(sim_obj1_detect,fun="equal")
 
 test_that("Ensure that the hash changes after reporting simulations",{
   expect_false(sim_obj1_detect@hash == sim_obj1_report@hash)
