@@ -1,16 +1,24 @@
 #' Determines the state_target_suitability from state_env using a custom function
 #'
 #' @param simulation_object a SimulationObject
-#' @param fun a function that takes an environmental SpatRaster and outputs a suitability SpatRaster values from 0 to 1
+#' @param fun either 'uniform' to use the included uniform suitability function or a function that takes an SimulationObject with an environment slot and outputs a SimulationObject with a target suitability SpatRaster with values from 0 to 1
+#' @param filename a file name and path to save the spatraster
 #' @param ... other parameters for the user supplied function fun
 #' @return A SimulationObject with a state_target_realised
 #' @examples
 #' \dontrun{
-#' sim_state_target_realise_fun(simulation_object, fun, ...)
+#' sim_state_target_suitability(simulation_object, fun, ...)
 #' }
-sim_state_target_suitability_fun <- function(simulation_object,filename = NULL, fun, ...) {
+sim_state_target_suitability <- function(simulation_object,fun,filename = NULL, ...) {
   simulation_object_original <- simulation_object
   simulation_object <- read_sim_obj_rasters(simulation_object)
+
+  if(is.character(fun)){
+    if(!(fun %in% c("uniform"))){
+      stop("Provided function must be 'uniform'")
+    }
+    fun <- get(paste0("state_target_suitability_",fun))
+  }
 
   # apply the function
   suitability <- fun(simulation_object, ...)

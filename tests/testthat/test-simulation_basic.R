@@ -10,7 +10,7 @@ sim_obj <- SimulationObject(background = background)
 sim_obj <- sim_state_env(sim_obj, fun = "uniform", value = 0.6)
 
 # 2 Simulate a uniform state of the target across the background within the simulation object
-sim_obj <- sim_state_target_suitability_uniform(sim_obj, value= 0.5,n_targets = 2)
+sim_obj <- sim_state_target_suitability(sim_obj, fun="uniform", value= 0.5,n_targets = 2)
 
 # 2.5 realise the distribution
 sim_obj <- sim_state_target_realise_threshold(sim_obj,threshold = 0.5)

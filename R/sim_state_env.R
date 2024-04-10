@@ -1,9 +1,9 @@
 #' The state of the environment
 #'
 #' @param simulation_object an R object of class 'SimulationObject' containing all the necessary information for the simulation
+#' @param fun either a function to be used, or a name of a provided function
 #' @param filename a file name and path to save the spatraster
 #' @param spatraster a SpatRaster to be used as the environment
-#' @param function either a function to be used, or a name of a provided function
 #' @return An updated simulation object with the newly added state of the environment in the correct slot
 #' @examples
 #' \dontrun{

@@ -21,9 +21,9 @@ test_that("Testing hashing at environment creation",{
 })
 
 # state suitability
-sim_obj1 <- sim_state_target_suitability_uniform(sim_obj1, value = 0.5000)
-sim_obj2 <- sim_state_target_suitability_uniform(sim_obj2, value = 0.5)
-sim_obj3 <- sim_state_target_suitability_uniform(sim_obj2, value = 0.6)
+sim_obj1 <- sim_state_target_suitability(sim_obj1, fun="uniform", value = 0.5000)
+sim_obj2 <- sim_state_target_suitability(sim_obj2, fun="uniform", value = 0.5)
+sim_obj3 <- sim_state_target_suitability(sim_obj2, fun="uniform", value = 0.6)
 
 test_that("Testing hashing at environment suitability simulation",{
   expect_true(sim_obj1@hash == sim_obj2@hash)

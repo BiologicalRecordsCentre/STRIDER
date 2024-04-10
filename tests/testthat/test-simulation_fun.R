@@ -25,7 +25,7 @@ suit_fun <- function(sim_obj){
   target_suitability
 }
 
-sim_obj <- sim_state_target_suitability_fun(sim_obj, fun = suit_fun)
+sim_obj <- sim_state_target_suitability(sim_obj, fun = suit_fun)
 
 #function for realising suitability
 realise_fun <- function(sim_obj){
