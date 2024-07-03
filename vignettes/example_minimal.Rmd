@@ -14,14 +14,179 @@ knitr::opts_chunk$set(
 )
 ```
 
-This is a basic example of how this package works.
+This is an example showing how different sampling methods impact.
 
-```{r setup, eval=F}
+```{r setup}
+# everything you need for STRIDER
 library(STRIDER)
 library(terra)
 library(sf)
 
+#for general data wrangling and visualistion
+library(dplyr)
+library(ggplot2)
+
+#for model vaidation
+library(caret)
+
 #set a seed so it's reproducible
 set.seed(42)
 ```
+
+## Simulating data
+
+### Background
+
+The background is simply a SpatRaster from which the CRS/extent/resolution will be used for subsequent simulation steps.
+
+```{r}
+dim_x <- 500
+dim_y <- 500
+background <- terra::rast(matrix(0,dim_x,dim_y))
+sim_obj <- SimulationObject(background = background)
+```
+
+
+### Environmental state
+
+Here we want to represent the state of the environment. Essentially we need to capture variables (real or abstract) which influence where the target might exist.
+
+Here we define three variables:
+
+ * Rainfall (ecological niche)
+ * Temperature (ecological niche)
+ * Urban density (factor affecting effort)
+
+```{r}
+# Define an environmental state with two variables, env1 and env2 which create gradients perpendicular
+env1 <- terra::rast(matrix(rep(seq(from = 1, to = dim_x),times = dim_y),dim_x,dim_y))
+env1 <- env1/max(values(env1))
+env2 <- terra::rast(matrix(rep(seq(from = 1, to = dim_x),times = dim_y),dim_x,dim_y,byrow = T))
+env2 <- env2/max(values(env2))
+env3 <- terra::rast(matrix(rep(seq(from = 1, to = dim_x),times = dim_y),dim_x,dim_y,byrow = T))
+env3 <- env3/max(values(env3))
+env <- c(env1,env2,env3)
+
+names(env) <- c("rainfall","temperature","urban_density")
+
+#slot it into the simulation object
+sim_obj <- sim_state_env(sim_obj,spatraster = env)
+```
+
+### Target state
+
+Here we simulate the target
+
+```{r}
+# Define a function to turn the environment into suitability
+suitabiity_function <- function(sim_obj){
+  out <- c(sim_obj@state_env$rainfall,sim_obj@state_env$temperature)
+  out <- mean(out)
+  names(out) <- "target"
+  out
+}
+
+#apply function
+sim_obj <- sim_state_target_suitability(sim_obj,fun = suitabiity_function)
+
+#realise
+sim_obj <- sim_state_target_realise(sim_obj,fun="binomial")
+
+
+```
+
+
+### Effort
+
+Simulate effort correlating with environment variable 2
+
+```{r}
+# alternative method of defining effort: add custom points
+points_sf <- st_as_sf(data.frame(x = c(20,40,60),y = c(20,40,60)),coords = c("x", "y"))
+sim_obj <- sim_effort(sim_obj,
+                      sf = points_sf)
+
+#simulate effort, biased by urban density
+sim_obj <- sim_effort(sim_obj,
+                      fun = "basic", 
+                      n_samplers=500, 
+                      n_visits = 1, 
+                      n_sample_units = 1,
+                      prob_raster = sim_obj@state_env$urban_density)
+
+```
+
+### Detection
+
+```{r}
+#detection 100%
+sim_obj <- sim_detect(sim_obj,fun="equal",prob = 1)
+```
+
+### Reporting
+
+```{r}
+#reporting 100%
+sim_obj <- sim_report(sim_obj,fun="equal",prob = 1)
+```
+
+```{r}
+#visualise the simulation object's components
+plot(sim_obj)
+```
+
+## Visualising data
+
+```{r}
+#load the data
+df <- export_df(sim_obj)
+```
+
+## Statistical analysis
+
+Make a "biological recording" dataset with presence-only dataset (`po`) and a presence-absence dataset (`pa`)
+
+```{r}
+data_pa <- df #presence absense
+data_po <- df[df$state_detected==1,] #presense only
+```
+
+Generate some background samples to aid model fitting
+
+```{r}
+po_background <- effort_basic(sim_obj,100) |>
+  extract(x=sim_obj@state_env,xy=T) |>
+  st_as_sf(coords=c("x","y")) |>
+  mutate(state_detected=0)
+
+data_po <- bind_rows(data_po,po_background)
+
+```
+
+Combine dataset and fit models
+
+```{r}
+fit_mod <- function(df){
+  glm(state_detected~rainfall + temperature, data = df, family = binomial(link = "logit"))
+}
+
+threshold = 0.5
+
+# fit model to presence only data with background samples
+mod_po <- fit_mod(data_po)
+mod_po_predictions <- predict(sim_obj@state_env,mod_po,type = "response")>threshold
+
+
+#Compare it to presence/absence data
+mod_pa <- fit_mod(data_pa)
+mod_pa_predictions <- predict(sim_obj@state_env,mod_pa,type = "response")>threshold
+```
+
+Compare model performance
+
+```{r}
+plot((mod_po_predictions-sim_obj@state_target_realised))
+plot((mod_pa_predictions-sim_obj@state_target_realised))
+```
+
 

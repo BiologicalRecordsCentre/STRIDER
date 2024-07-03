@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_state_env.R
 \name{sim_state_env}
 \alias{sim_state_env}
-\title{The state of the environment}
+\title{Define the state of the environment}
 \usage{
 sim_state_env(
   simulation_object,
@@ -13,22 +13,40 @@ sim_state_env(
 )
 }
 \arguments{
-\item{simulation_object}{an R object of class 'SimulationObject' containing all the necessary information for the simulation}
+\item{simulation_object}{An object representing the simulation. The object should contain
+a `background` slot and a `state_env` slot.}
 
-\item{fun}{either a function to be used, or a name of a provided function}
+\item{fun}{A character string specifying the name of a predefined function            (`"gradient"` or `"uniform"`) or a user-defined function.}
 
-\item{filename}{a file name and path to save the spatraster}
+\item{filename}{A character string specifying the filename to save the resultant SpatRaster. If `NULL`, the SpatRaster is not saved to a file.}
 
-\item{spatraster}{a SpatRaster to be used as the environment}
+\item{spatraster}{A `SpatRaster` object to be used directly as the state environment. If provided, it overrides the `fun` parameter.}
+
+\item{...}{Additional arguments to be passed to the function specified in `fun`.}
 }
 \value{
 An updated simulation object with the newly added state of the environment in the correct slot
 }
 \description{
-The state of the environment
+This function updates the state environment of a given simulation object by
+either using a provided SpatRaster, a predefined function (`gradient` or `uniform`),
+or a user-defined function. The updated simulation object with the new state environment
+and metadata is returned.
+}
+\details{
+- If a `spatraster` is provided, the function checks that its dimensions match
+  those of the simulation object's background.
+- If `fun` is provided as a character string, it must be either `"gradient"` or `"uniform"`.
+- If `fun` is provided as a user-defined function, it will be applied to the simulation object.
+- If `filename` is provided, the resultant SpatRaster is saved, and the filename is returned.
 }
 \examples{
 \dontrun{
-sim_state_env(simulation_object, fun = "uniform",value=1)
+sim_obj <- sim_state_env(sim_obj, fun = "uniform", value = 0.5)
+sim_obj <- sim_state_env(sim_obj, fun = "gradient", from = 0, to = 1)
+sim_obj <- sim_state_env(sim_obj, spatraster = my_spatraster)
+sim_obj <- sim_state_env(sim_obj, fun = my_custom_function)
+sim_obj <- sim_state_env(sim_obj, fun = "uniform", filename = "output.tif")
 }
+
 }

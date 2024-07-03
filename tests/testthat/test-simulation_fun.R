@@ -36,7 +36,7 @@ realise_fun <- function(sim_obj){
 sim_obj <- sim_state_target_realise(sim_obj,fun = realise_fun)
 
 # 3 Simulate effort across the landscape within the simulation object
-sim_obj <- sim_effort(sim_obj,fun="uniform", n_samplers = 2, n_visits = 3, n_sample_units=2, replace = FALSE)
+sim_obj <- sim_effort(sim_obj,fun="basic", n_samplers = 2, n_visits = 3, n_sample_units=2, replace = FALSE)
 
 # 4 Simulate detection within the simulation object
 sim_obj <- sim_detect(sim_obj,fun="equal", prob = 0.5)

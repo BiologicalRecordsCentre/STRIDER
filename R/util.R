@@ -59,3 +59,19 @@ hash_sim_obj <- function(sim_obj){
 
   digest::digest(sim_obj)
 }
+
+#' Export Simulation Report Data Frame
+#'
+#' This function exports the report data frame from a SimulationObject.
+#'
+#' @param sim_obj A SimulationObject containing the report data frame.
+#'
+#' @return A data frame containing the report from the SimulationObject.
+#' @examples
+#' \dontrun{
+#' report_df <- export_df(simulation_object)
+#' }
+#' @export
+export_df <- function(sim_obj){
+  sim_obj@report
+}
