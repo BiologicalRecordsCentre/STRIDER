@@ -1,4 +1,6 @@
 library(STRIDER)
+library(sf)
+library(terra)
 
 # Create the background
 background <- terra::rast(matrix(0,440,700))
@@ -17,7 +19,7 @@ sim_obj <- sim_state_target_realise(sim_obj,fun = "threshold",threshold = 0.5)
 sim_state_target_realise(sim_obj, fun = "binomial")
 
 # 3 Simulate effort across the landscape within the simulation object
-sim_obj <- sim_effort(sim_obj,fun="uniform", n_samplers = 2, n_visits = 3, n_sample_units=2, replace = FALSE)
+sim_obj <- sim_effort(sim_obj,fun="basic", n_samplers = 2, n_visits = 3, n_sample_units=2, replace = FALSE)
 
 # 4 Simulate detection within the simulation object
 sim_obj <- sim_detect(sim_obj,fun="equal", prob = 0.5)
@@ -25,7 +27,7 @@ sim_obj <- sim_detect(sim_obj,fun="equal", prob = 0.5)
 # 5 Simulate reporting within the simulation object
 sim_obj <- sim_report(sim_obj, fun="equal", prob = 0.8, platform = "iRecord")
 
-#print(sim_obj)
+plot(sim_obj)
 
 #1
 test_that("Test creating a uniform environment", {

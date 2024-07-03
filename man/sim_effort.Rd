@@ -2,22 +2,24 @@
 % Please edit documentation in R/sim_effort.R
 \name{sim_effort}
 \alias{sim_effort}
-\title{Defines effort using a custom function}
+\title{Defines effort using a built-in function, a custom function, or sf POINTS}
 \usage{
-sim_effort(simulation_object, fun, ...)
+sim_effort(simulation_object, fun, sf = NULL, ...)
 }
 \arguments{
-\item{simulation_object}{a SimulationObject}
+\item{simulation_object}{A SimulationObject containing simulation data.}
 
-\item{fun}{a function that takes the simulation object and returns a simulation object with  data in effort slot}
+\item{fun}{A function that takes the simulation_object and additional parameters, and returns a modified simulation_object with effort data.}
 
-\item{...}{other parameters for the user supplied function fun}
+\item{sf}{Optional; if provided, skips applying 'fun' and directly uses this Spatial*DataFrame (sf) for effort calculation.}
+
+\item{...}{Additional parameters passed to the user-supplied function 'fun'.}
 }
 \value{
-A SimulationObject with a state_target_realised
+A SimulationObject with updated effort information.
 }
 \description{
-Defines effort using a custom function
+This function applies a user-supplied function to a SimulationObject to define effort.
 }
 \examples{
 \dontrun{

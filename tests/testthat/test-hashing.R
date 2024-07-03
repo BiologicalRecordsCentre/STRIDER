@@ -51,7 +51,7 @@ test_that("Testing hashing at environment suitability simulation - Ensure that t
   expect_false(sim_obj2_bin@hash == sim_obj3_bin@hash)
 })
 
-sim_obj1_effort <- sim_effort(sim_obj1_thresh,fun="uniform",n_samplers = 10)
+sim_obj1_effort <- sim_effort(sim_obj1_thresh,fun="basic",n_samplers = 10)
 
 test_that("Ensure that the hash changes after effort simulation",{
   expect_false(sim_obj1_thresh@hash == sim_obj1_effort@hash)

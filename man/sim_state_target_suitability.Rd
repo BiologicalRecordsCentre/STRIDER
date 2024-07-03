@@ -2,27 +2,38 @@
 % Please edit documentation in R/sim_state_target_suitability.R
 \name{sim_state_target_suitability}
 \alias{sim_state_target_suitability}
-\title{Determines the state_target_suitability from state_env using a custom function}
+\title{Determine the Target Suitability from the State Environment}
 \usage{
 sim_state_target_suitability(simulation_object, fun, filename = NULL, ...)
 }
 \arguments{
-\item{simulation_object}{a SimulationObject}
+\item{simulation_object}{A SimulationObject}
 
-\item{fun}{either 'uniform' to use the included uniform suitability function or a function that takes an SimulationObject with an environment slot and outputs a SimulationObject with a target suitability SpatRaster with values from 0 to 1}
+\item{fun}{Either 'uniform' to use the included uniform suitability function or a custom function that takes a SimulationObject with an environment slot and outputs a target suitability SpatRaster with as many bands as there are targets}
 
-\item{filename}{a file name and path to save the spatraster}
+\item{filename}{A character string specifying the filename to save the resultant SpatRaster. If `NULL`, the SpatRaster is not saved to a file.}
 
-\item{...}{other parameters for the user supplied function fun}
+\item{...}{Additional arguments to be passed to the function specified in `fun`.}
 }
 \value{
-A SimulationObject with a state_target_realised
+The updated simulation object with the new state target suitability.
 }
 \description{
-Determines the state_target_suitability from state_env using a custom function
+This function calculates the state target suitability for a given simulation object
+using either a predefined or a custom function. The updated simulation object with the
+new state target suitability and metadata is returned.
+}
+\details{
+- If `fun` is provided as 'uniform', the function uses the included uniform suitability function. This is unlikely to be a useful function but provided as a baseline.
+- If `fun` is a character string corresponding to a function name, the function checks its existence and retrieves it.
+- If `fun` is a custom function, it will be applied to the simulation object.
+- If `filename` is provided, the resultant SpatRaster is saved, and the filename is returned.
 }
 \examples{
 \dontrun{
-sim_state_target_suitability(simulation_object, fun, ...)
+sim_obj <- sim_state_target_suitability(sim_obj, fun = "uniform", value = 0.5)
+sim_obj <- sim_state_target_suitability(sim_obj, fun = my_custom_function)
+sim_obj <- sim_state_target_suitability(sim_obj, fun = my_custom_function, filename = "output.tif")
 }
+
 }

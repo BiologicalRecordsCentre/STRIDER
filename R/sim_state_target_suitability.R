@@ -1,23 +1,42 @@
-#' Determines the state_target_suitability from state_env using a custom function
+#' Determine the Target Suitability from the State Environment
 #'
-#' @param simulation_object a SimulationObject
-#' @param fun either 'uniform' to use the included uniform suitability function or a function that takes an SimulationObject with an environment slot and outputs a SimulationObject with a target suitability SpatRaster with values from 0 to 1
-#' @param filename a file name and path to save the spatraster
-#' @param ... other parameters for the user supplied function fun
-#' @return A SimulationObject with a state_target_realised
+#' This function calculates the state target suitability for a given simulation object
+#' using either a predefined or a custom function. The updated simulation object with the
+#' new state target suitability and metadata is returned.
+#'
+#' @param simulation_object A SimulationObject
+#' @param fun Either 'uniform' to use the included uniform suitability function or a custom function that takes a SimulationObject with an environment slot and outputs a target suitability SpatRaster with as many bands as there are targets
+#' @param filename A character string specifying the filename to save the resultant SpatRaster. If `NULL`, the SpatRaster is not saved to a file.
+#' @param ... Additional arguments to be passed to the function specified in `fun`.
+#'
+#' @return The updated simulation object with the new state target suitability.
+#'
+#' @details
+#' - If `fun` is provided as 'uniform', the function uses the included uniform suitability function. This is unlikely to be a useful function but provided as a baseline.
+#' - If `fun` is a character string corresponding to a function name, the function checks its existence and retrieves it.
+#' - If `fun` is a custom function, it will be applied to the simulation object.
+#' - If `filename` is provided, the resultant SpatRaster is saved, and the filename is returned.
+#'
 #' @examples
 #' \dontrun{
-#' sim_state_target_suitability(simulation_object, fun, ...)
+#' sim_obj <- sim_state_target_suitability(sim_obj, fun = "uniform", value = 0.5)
+#' sim_obj <- sim_state_target_suitability(sim_obj, fun = my_custom_function)
+#' sim_obj <- sim_state_target_suitability(sim_obj, fun = my_custom_function, filename = "output.tif")
 #' }
+#'
+#' @export
 sim_state_target_suitability <- function(simulation_object,fun,filename = NULL, ...) {
   simulation_object_original <- simulation_object
   simulation_object <- read_sim_obj_rasters(simulation_object)
 
   if(is.character(fun)){
-    if(!(fun %in% c("uniform"))){
-      stop("Provided function must be 'uniform'")
+    if(exists(fun)){
+      fun <- get(fun)
+    } else if((fun %in% c("uniform"))) {
+      fun <- get(paste0("state_target_suitability_",fun))
+    } else {
+      stop("Function not found")
     }
-    fun <- get(paste0("state_target_suitability_",fun))
   }
 
   # apply the function
