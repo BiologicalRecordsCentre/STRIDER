@@ -30,13 +30,10 @@ library(terra)
 library(sf)
 
 #for general data wrangling and visualistion
-if (!require(dplyr)) install.packages("dplyr", dependencies = TRUE)
 library(dplyr)
-if (!require(ggplot2)) install.packages("ggplot2", dependencies = TRUE)
 library(ggplot2)
 
 #for model vaidation
-if (!require(caret)) install.packages("caret", dependencies = TRUE)
 library(caret)
 
 #set a seed so it's reproducible
