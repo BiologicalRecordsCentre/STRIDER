@@ -1,0 +1,10 @@
+pandoc: 3.1.11
+pkgdown: 2.0.9
+pkgdown_sha: ~
+articles:
+  example_minimal: example_minimal.html
+last_built: 2024-07-04T16:06Z
+urls:
+  reference: https://biologicalrecordscentre.github.io/STRIDER/reference
+  article: https://biologicalrecordscentre.github.io/STRIDER/articles
+
