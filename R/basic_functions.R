@@ -188,7 +188,7 @@ state_target_realise_threshold <- function(simulation_object,threshold){
 #' effort <- effort_basic(simulation_object, n_samplers = 2, n_visits = 3)
 #' }
 #' @export
-effort_basic <- function(simulation_object, n_samplers = 1, n_visits = 1, n_sample_units=1, replace = FALSE,prob_raster = NULL) {
+effort_basic <- function(simulation_object, n_samplers = 1, n_visits = 1, n_sample_units=1, replace = FALSE,prob_raster = NULL,...) {
 
   #which cells are visited
   state_target <- simulation_object@state_target_suitability
