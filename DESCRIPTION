@@ -13,7 +13,7 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0),
     dplyr,
-    ggplot2
+    ggplot2,
     caret
 VignetteBuilder: knitr
 RoxygenNote: 7.3.2
