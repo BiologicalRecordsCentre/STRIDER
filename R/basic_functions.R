@@ -181,6 +181,7 @@ state_target_realise_threshold <- function(simulation_object,threshold){
 #' @param n_sample_units The number of sample units per visit. Default is 1.
 #' @param replace A logical value indicating whether sampling with replacement is allowed. Default is FALSE.
 #' @param prob_raster A SpatRaster providing the probability of sampling each cell. Default is NULL.
+#' @param ... Any other arguments to function
 #'
 #' @return An sf object containing the sampling effort points.
 #' @examples

@@ -207,12 +207,12 @@ mod_pa <- fit_mod(data_pa)
 mod_pa_predictions <- predict(sim_obj@state_env,mod_pa,type = "response")
 ```
 
-## Many simulations
+## A simulation workflow
 
 In this section, we will run multiple simulations to investigate the impact of different sampling methods on model performance. We will use predefined objects and a new function to adjust sampling weight rasters. By chaining together various steps of the simulation pipeline, we can systematically alter the factors of interest, such as sampling bias strength and the number of samplers, to study their effects on the results.
 
 ### Predefined Objects
-We start with the predefined objects: background, env, and suitabiity_function. These objects were defined in the earlier sections of this vignette.
+We start with the predefined objects: background, env, and suitability_function. These objects were defined in the earlier sections of this vignette.
 
 ```{r previous objects}
 #use pre-defined objects
@@ -312,9 +312,9 @@ single_run_time <- system.time(run_simulation(1,1,500))["elapsed"]
 # define parameters data frame
 simulation_parameters <- 
   expand.grid(
-    rep = 1:5,
-    sampling_bias_strength = c(0,0.25,0.5,0.75,1),
-    n_samplers=seq(from = 50,to= 400, by = 50),
+    rep = 1:3,
+    sampling_bias_strength = c(0,0.5,1),
+    n_samplers=seq(from = 50,to= 350, by = 100),
     stringsAsFactors = F
   )
 

@@ -13,7 +13,24 @@ setClass("SimulationObject",
          )
 )
 
-# Create a constructor for the SimulationObject class
+#' Create a SimulationObject
+#'
+#' A constructor for the `SimulationObject` class, which initializes the object with the specified background and optional state components.
+#'
+#' @param background A `SpatRaster` object representing the background raster data.
+#' @param state_env Optional. A `SpatRaster` object representing the environmental state. Default is `NULL`.
+#' @param state_target_suitability Optional. A `SpatRaster` object representing the target suitability state. Default is `NULL`.
+#' @param state_target_realised Optional. A `SpatRaster` object representing the realised target state. Default is `NULL`.
+#' @param effort Optional. A data frame or spatial object representing the sampling effort. Default is `NULL`.
+#' @param detect Optional. A data frame or spatial object representing the detection events. Default is `NULL`.
+#' @param report Optional. A data frame or spatial object representing the reporting events. Default is `NULL`.
+#' @return An object of class `SimulationObject`.
+#' @examples
+#' \dontrun{
+#' background <- terra::rast(matrix(0, 500, 500))
+#' sim_obj <- SimulationObject(background)
+#' }
+#' @export
 SimulationObject <- function(background, state_env = NULL, state_target_suitability = NULL, state_target_realised= NULL, effort = NULL, detect = NULL, report = NULL) {
   tmp <- new("SimulationObject",
       background = background,
@@ -39,6 +56,19 @@ SimulationObject <- function(background, state_env = NULL, state_target_suitabil
   )
 }
 
+#' Plot a SimulationObject
+#'
+#' This method plots the different components of a `SimulationObject`, including the environmental state, target suitability, realised target state, effort, detection events, and reporting events.
+#'
+#' @param x A `SimulationObject` to be plotted.
+#' @return Plots the various components of the `SimulationObject` to the current graphics device.
+#' @examples
+#' \dontrun{
+#' background <- terra::rast(matrix(0, 500, 500))
+#' sim_obj <- SimulationObject(background)
+#' plot(sim_obj)
+#' }
+#' @export
 setMethod("plot", "SimulationObject", function(x) {
   x <- read_sim_obj_rasters(x)
 

@@ -23,7 +23,7 @@ organisms or similar. The simulation is split into a series processes:
 - Reporting: how is the interaction reported? (is the species recorded?
   Are absences recorded? At what spatial resolution is it reported at?)
 
-![](diagrams/overview.drawio.svg)
+![](man/figures/overview.drawio.svg)
 
 ## Overview
 
@@ -186,8 +186,18 @@ sim_obj
     ## Slot "report":
     ## NULL
     ## 
+    ## Slot "metadata":
+    ## $state_env
+    ## $state_env$fun
+    ## [1] "uniform"
+    ## 
+    ## $state_env$value
+    ## [1] 20
+    ## 
+    ## 
+    ## 
     ## Slot "hash":
-    ## [1] "02770d7a1351d2b3c355c14ad2ebe33a"
+    ## [1] "253f8b7c8478a288ccd2b954fa3f1196"
 
 ### Simulating the environmental state
 
@@ -230,7 +240,7 @@ occurrence (slot `@state_target`), and a realised absolute value (slot
 representing species occupancy or a positive integer representing
 abundance. Here’s an example:
 
-![](README_files/figure-gfm/realisation_diagram-1.png)<!-- -->
+![](man/figures/realisation_diagram-1.png)<!-- -->![](man/figures/realisation_diagram-2.png)<!-- -->![](man/figures/realisation_diagram-3.png)<!-- -->
 
 Both of these representations of state are represented in the simulation
 object as SpatRaster with layers for each target. Again, if you want the
@@ -297,20 +307,25 @@ target present).
 
 ``` r
 # Simulate the sampling effort
-sim_obj <- sim_effort(sim_obj,fun = "uniform", n_samplers=2, n_visits = 1, n_sample_units = 2)
+sim_obj <- sim_effort(sim_obj,fun = "basic", n_samplers=2, n_visits = 1, n_sample_units = 2)
 sim_obj@effort
 ```
 
-    ## Simple feature collection with 4 features and 7 fields
+    ## Simple feature collection with 4 features and 10 fields
     ## Geometry type: POINT
     ## Dimension:     XY
-    ## Bounding box:  xmin: 11.5 ymin: 29.5 xmax: 14.5 ymax: 29.5
+    ## Bounding box:  xmin: 11.5 ymin: 5.5 xmax: 27.5 ymax: 13.5
     ## CRS:           NA
-    ##   sampler visit unit cell_id          geometry env suit_target_1 real_target_1
-    ## 1       1     1    1      15 POINT (14.5 29.5)  20           0.5             1
-    ## 2       1     1    2      15 POINT (14.5 29.5)  20           0.5             1
-    ## 3       2     1    1      12 POINT (11.5 29.5)  20           0.5             1
-    ## 4       2     1    2      12 POINT (11.5 29.5)  20           0.5             1
+    ##   sampler visit unit cell_id          geometry ID env suit_ID suit_target_1
+    ## 1       1     1    1     492 POINT (11.5 13.5)  1  20       1           0.5
+    ## 2       1     1    2     492 POINT (11.5 13.5)  2  20       2           0.5
+    ## 3       2     1    1     748  POINT (27.5 5.5)  3  20       3           0.5
+    ## 4       2     1    2     748  POINT (27.5 5.5)  4  20       4           0.5
+    ##   real_ID real_target_1
+    ## 1       1             1
+    ## 2       2             1
+    ## 3       3             0
+    ## 4       4             0
 
 The function for simulating effort start is `sim_effort`
 
@@ -413,7 +428,7 @@ sim_obj <- sim_state_target_suitability(sim_obj,fun = "uniform", value = 0.5)
 sim_obj <- sim_state_target_realise(sim_obj,fun = "binomial")
 
 # Simulate the sampling effort
-sim_obj <- sim_effort(sim_obj,fun = "uniform", n_visits = 100, replace = FALSE)
+sim_obj <- sim_effort(sim_obj,fun = "basic", n_visits = 100, replace = FALSE)
 
 # Simulate the detection
 sim_obj <- sim_detect(sim_obj,fun = "equal", prob = 0.5)
@@ -421,14 +436,7 @@ sim_obj <- sim_detect(sim_obj,fun = "equal", prob = 0.5)
 # Simulate the reporting
 sim_obj <- sim_report(sim_obj,fun = "equal", prob = 0.8, platform = "iRecord")
 
-plot(sim_obj@state_target_realised) # State of the target
-plot(sim_obj@effort$geometry, add = TRUE,pch=16) # Effort
-plot(sim_obj@detect$geometry[sim_obj@detect$detected == FALSE], col = "red", pch = 4, add = TRUE) # Highlight the non-detections
-plot(sim_obj@report$geometry[sim_obj@report$reported], col = "yellow", add = TRUE) # Highlight reported records as yellow
-
-#add a legend
-legend(1, 5, legend=c("Sampled", "Not detected","Reported"),
-       col=c("black","red", "yellow"), pch=c(16,4,1), cex=0.8,bg='grey')
+plot(sim_obj) 
 ```
 
-![](README_files/figure-gfm/example-1.png)<!-- -->
+![](man/figures/example-1.png)<!-- -->![](man/figures/example-2.png)<!-- -->![](man/figures/example-3.png)<!-- -->![](man/figures/example-4.png)<!-- -->![](man/figures/example-5.png)<!-- -->![](man/figures/example-6.png)<!-- -->

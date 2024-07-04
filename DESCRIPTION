@@ -21,3 +21,4 @@ Imports:
     terra,
     sf
 Config/testthat/edition: 3
+URL: https://biologicalrecordscentre.github.io/STRIDER/

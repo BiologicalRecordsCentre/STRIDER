@@ -5,7 +5,7 @@ output:
 ---
 
 ```{r setup, include=FALSE,echo=F}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,fig.path = "man/figures/")
 library(STRIDER)
 library(terra)
 library(sf)
@@ -27,7 +27,7 @@ STRIDER is an R package for facilitating the simulation of virtual species and t
  * Identification/Detection: what happens when a sampler encounters the target (is the species detected? is the species correctly identified?)
  * Reporting: how is the interaction reported? (is the species recorded? Are absences recorded? At what spatial resolution is it reported at?)
  
-![](diagrams/overview.drawio.svg)
+![](man/figures/overview.drawio.svg)
 
 ## Overview
 
@@ -131,10 +131,7 @@ Here we define the state of the target or targets. We define two versions of thi
 ```{r realisation_diagram, echo=F}
 sim_obj <- sim_state_target_suitability(sim_obj,fun = "uniform")
 sim_obj <- sim_state_target_realise(sim_obj,fun = "binomial")
-par(mfrow=c(1,2))
-plot(sim_obj@state_target_suitability,main = "@state_target_suitability")
-plot(sim_obj@state_target_realised,main = "@state_target_realised")
-par(mfrow=c(1,1))
+plot(sim_obj)
 ```
 
 Both of these representations of state are represented in the simulation object as SpatRaster with layers for each target. Again, if you want the target to change over time then create a list of rasters where each list item represents the target state at each time step, but this will need some wrangling.
@@ -175,7 +172,7 @@ Here's a very basic example where we generate effort comprising of two samplers,
  
 ```{r sampling data}
 # Simulate the sampling effort
-sim_obj <- sim_effort(sim_obj,fun = "uniform", n_samplers=2, n_visits = 1, n_sample_units = 2)
+sim_obj <- sim_effort(sim_obj,fun = "basic", n_samplers=2, n_visits = 1, n_sample_units = 2)
 sim_obj@effort
 ```
  
@@ -254,7 +251,7 @@ sim_obj <- sim_state_target_suitability(sim_obj,fun = "uniform", value = 0.5)
 sim_obj <- sim_state_target_realise(sim_obj,fun = "binomial")
 
 # Simulate the sampling effort
-sim_obj <- sim_effort(sim_obj,fun = "uniform", n_visits = 100, replace = FALSE)
+sim_obj <- sim_effort(sim_obj,fun = "basic", n_visits = 100, replace = FALSE)
 
 # Simulate the detection
 sim_obj <- sim_detect(sim_obj,fun = "equal", prob = 0.5)
@@ -262,12 +259,5 @@ sim_obj <- sim_detect(sim_obj,fun = "equal", prob = 0.5)
 # Simulate the reporting
 sim_obj <- sim_report(sim_obj,fun = "equal", prob = 0.8, platform = "iRecord")
 
-plot(sim_obj@state_target_realised) # State of the target
-plot(sim_obj@effort$geometry, add = TRUE,pch=16) # Effort
-plot(sim_obj@detect$geometry[sim_obj@detect$detected == FALSE], col = "red", pch = 4, add = TRUE) # Highlight the non-detections
-plot(sim_obj@report$geometry[sim_obj@report$reported], col = "yellow", add = TRUE) # Highlight reported records as yellow
-
-#add a legend
-legend(1, 5, legend=c("Sampled", "Not detected","Reported"),
-       col=c("black","red", "yellow"), pch=c(16,4,1), cex=0.8,bg='grey')
+plot(sim_obj) 
 ```
