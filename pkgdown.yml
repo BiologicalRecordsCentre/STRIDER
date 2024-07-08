@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   custom_functions: custom_functions.html
   example_minimal: example_minimal.html
-last_built: 2024-07-08T13:09Z
+last_built: 2024-07-08T13:15Z
 urls:
   reference: https://biologicalrecordscentre.github.io/STRIDER/reference
   article: https://biologicalrecordscentre.github.io/STRIDER/articles
