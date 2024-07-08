@@ -35,7 +35,7 @@ sim_effort <- function(simulation_object, fun, sf=NULL, ...) {
 
   #loop through each target
   targets_sf <- list()
-  for (target in names(sim_obj@state_target_suitability)){
+  for (target in names(simulation_object@state_target_suitability)){
     target_sf <- effort_sf
     target_sf$target <- target
 
