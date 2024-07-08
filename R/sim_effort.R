@@ -30,12 +30,29 @@ sim_effort <- function(simulation_object, fun, sf=NULL, ...) {
   }
 
   #get values from env, suitability, realised
-  extracted_values <- terra::extract(simulation_object@state_env,effort_sf)
+  extracted_values <- terra::extract(simulation_object@state_env,effort_sf,ID=F)
   effort_sf[,names(extracted_values)] <- extracted_values
-  extracted_values <- terra::extract(simulation_object@state_target_suitability,effort_sf)
-  effort_sf[,paste0("suit_",names(extracted_values))] <- extracted_values
-  extracted_values <- terra::extract(simulation_object@state_target_realised,effort_sf)
-  effort_sf[,paste0("real_",names(extracted_values))] <- extracted_values
+
+  #loop through each target
+  targets_sf <- list()
+  for (target in names(sim_obj@state_target_suitability)){
+    target_sf <- effort_sf
+    target_sf$target <- target
+
+    #extract suitability
+    extracted_values <- terra::extract(simulation_object@state_target_suitability[target],effort_sf,ID=F)
+
+    target_sf[,"target_suitability"] <- extracted_values
+
+    #extract realised
+    extracted_values <- terra::extract(simulation_object@state_target_realised[target],effort_sf,ID=F)
+    target_sf[,"target_realised"] <- extracted_values
+
+    targets_sf[[target]] <- target_sf
+  }
+
+  effort_sf <- do.call(rbind,targets_sf)
+  rownames(effort_sf) <- NULL
 
   # validity checks
   fun_args <- as.list(match.call())

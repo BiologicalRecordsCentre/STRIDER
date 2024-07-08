@@ -27,8 +27,6 @@ sim_obj <- sim_detect(sim_obj,fun="equal", prob = 0.5)
 # 5 Simulate reporting within the simulation object
 sim_obj <- sim_report(sim_obj, fun="equal", prob = 0.8, platform = "iRecord")
 
-plot(sim_obj)
-
 #1
 test_that("Test creating a uniform environment", {
   expect_true(class(sim_obj) == "SimulationObject")

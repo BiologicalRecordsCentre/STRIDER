@@ -104,7 +104,7 @@ background <- terra::rast(matrix(0,30,30))
 
 # Create the simulation object
 sim_obj <- SimulationObject(background = background)
-sim_obj <- sim_state_env(sim_obj,fun = "uniform",value = 20)
+sim_obj <- sim_state_env(sim_obj,fun = state_env_gradient,from = 0,to = 1)
 sim_obj
 ```
 
@@ -129,7 +129,15 @@ The BYOD (Bring Your Own Data) function is `sim_state_env(spatraster = [your_ras
 Here we define the state of the target or targets. We define two versions of this: a continuous variable representing a probability of occurrence (slot `@state_target`), and a realised absolute value (slot `@state_target_realised`) which could contain a binary (0 or 1) representing species occupancy or a positive integer representing abundance. Here's an example: 
 
 ```{r realisation_diagram, echo=F}
-sim_obj <- sim_state_target_suitability(sim_obj,fun = "uniform")
+# optimal environment is 0.5
+state_target_suitability_example <- function(sim_obj){
+  out <-  sim_obj@state_env*2
+  out[out>1] <- 2-out[out>1]
+  out
+}
+
+
+sim_obj <- sim_state_target_suitability(sim_obj,state_target_suitability_example)
 sim_obj <- sim_state_target_realise(sim_obj,fun = "binomial")
 plot(sim_obj)
 ```
@@ -215,7 +223,7 @@ suit_fun <- function(sim_obj){
   names(target_suitability) <- "frog" #give my layer a name
 
   # set suitability under certain critera eg. 0.7 when rainfall>500 and altitude < 50
-  target_suitability[sim_obj@state_env$rainfall>500 & sim_obj@state_env$altitude<50] <- 0.4
+  target_suitability[[sim_obj@state_env$rainfall>500 & sim_obj@state_env$altitude<50]] <- 0.4
   target_suitability[sim_obj@state_env$rainfall>800 & sim_obj@state_env$altitude<40] <- 0.9
 
   target_suitability #return just the suitability layer
@@ -231,21 +239,27 @@ This function must take the SimulationObject as its first argument. This means y
 Here is an example which runs through a very simple example and plots the output. 
 
 ```{r example}
+rm(sim_obj)
 library(STRIDER)
 library(terra)
 library(sf)
 
 # Create the background
-background <- terra::rast(matrix(0,30,30))
+background <- terra::rast(matrix(0,50,50))
 
 # Create the simulation object
 sim_obj <- SimulationObject(background = background)
 
 # Simulate the environment state
-sim_obj <- sim_state_env(sim_obj,fun="gradient")
+sim_obj <- sim_state_env(sim_obj,fun = state_env_gradient,from = 0,to = 1)
 
 # Simulate the target state
-sim_obj <- sim_state_target_suitability(sim_obj,fun = "uniform", value = 0.5)
+state_target_suitability_example <- function(sim_obj){ 
+  out <-  sim_obj@state_env*2
+  out[out>1] <- 2-out[out>1]
+  out # optimal environment is 0.5
+}
+sim_obj <- sim_state_target_suitability(sim_obj,state_target_suitability_example)
 
 #realise the state
 sim_obj <- sim_state_target_realise(sim_obj,fun = "binomial")

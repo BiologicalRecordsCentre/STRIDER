@@ -144,7 +144,7 @@ background <- terra::rast(matrix(0,30,30))
 
 # Create the simulation object
 sim_obj <- SimulationObject(background = background)
-sim_obj <- sim_state_env(sim_obj,fun = "uniform",value = 20)
+sim_obj <- sim_state_env(sim_obj,fun = state_env_gradient,from = 0,to = 1)
 sim_obj
 ```
 
@@ -168,8 +168,8 @@ sim_obj
     ## coord. ref. :  
     ## source(s)   : memory
     ## name        : env 
-    ## min value   :  20 
-    ## max value   :  20 
+    ## min value   :   0 
+    ## max value   :   1 
     ## 
     ## Slot "state_target_suitability":
     ## NULL
@@ -189,15 +189,18 @@ sim_obj
     ## Slot "metadata":
     ## $state_env
     ## $state_env$fun
-    ## [1] "uniform"
+    ## state_env_gradient
     ## 
-    ## $state_env$value
-    ## [1] 20
+    ## $state_env$from
+    ## [1] 0
+    ## 
+    ## $state_env$to
+    ## [1] 1
     ## 
     ## 
     ## 
     ## Slot "hash":
-    ## [1] "253f8b7c8478a288ccd2b954fa3f1196"
+    ## [1] "841156773684e37801aefddb92881877"
 
 ### Simulating the environmental state
 
@@ -311,21 +314,21 @@ sim_obj <- sim_effort(sim_obj,fun = "basic", n_samplers=2, n_visits = 1, n_sampl
 sim_obj@effort
 ```
 
-    ## Simple feature collection with 4 features and 10 fields
+    ## Simple feature collection with 4 features and 8 fields
     ## Geometry type: POINT
     ## Dimension:     XY
-    ## Bounding box:  xmin: 11.5 ymin: 5.5 xmax: 27.5 ymax: 13.5
+    ## Bounding box:  xmin: 4.5 ymin: 8.5 xmax: 11.5 ymax: 13.5
     ## CRS:           NA
-    ##   sampler visit unit cell_id          geometry ID env suit_ID suit_target_1
-    ## 1       1     1    1     492 POINT (11.5 13.5)  1  20       1           0.5
-    ## 2       1     1    2     492 POINT (11.5 13.5)  2  20       2           0.5
-    ## 3       2     1    1     748  POINT (27.5 5.5)  3  20       3           0.5
-    ## 4       2     1    2     748  POINT (27.5 5.5)  4  20       4           0.5
-    ##   real_ID real_target_1
-    ## 1       1             1
-    ## 2       2             1
-    ## 3       3             0
-    ## 4       4             0
+    ##   sampler visit unit cell_id       env target target_suitability
+    ## 1       1     1    1     492 0.3793103    env          0.7586207
+    ## 2       1     1    2     492 0.3793103    env          0.7586207
+    ## 3       2     1    1     635 0.1379310    env          0.2758621
+    ## 4       2     1    2     635 0.1379310    env          0.2758621
+    ##   target_realised          geometry
+    ## 1               1 POINT (11.5 13.5)
+    ## 2               1 POINT (11.5 13.5)
+    ## 3               0   POINT (4.5 8.5)
+    ## 4               0   POINT (4.5 8.5)
 
 The function for simulating effort start is `sim_effort`
 
@@ -388,7 +391,7 @@ suit_fun <- function(sim_obj){
   names(target_suitability) <- "frog" #give my layer a name
 
   # set suitability under certain critera eg. 0.7 when rainfall>500 and altitude < 50
-  target_suitability[sim_obj@state_env$rainfall>500 & sim_obj@state_env$altitude<50] <- 0.4
+  target_suitability[[sim_obj@state_env$rainfall>500 & sim_obj@state_env$altitude<50]] <- 0.4
   target_suitability[sim_obj@state_env$rainfall>800 & sim_obj@state_env$altitude<40] <- 0.9
 
   target_suitability #return just the suitability layer
@@ -408,21 +411,27 @@ Here is an example which runs through a very simple example and plots
 the output.
 
 ``` r
+rm(sim_obj)
 library(STRIDER)
 library(terra)
 library(sf)
 
 # Create the background
-background <- terra::rast(matrix(0,30,30))
+background <- terra::rast(matrix(0,50,50))
 
 # Create the simulation object
 sim_obj <- SimulationObject(background = background)
 
 # Simulate the environment state
-sim_obj <- sim_state_env(sim_obj,fun="gradient")
+sim_obj <- sim_state_env(sim_obj,fun = state_env_gradient,from = 0,to = 1)
 
 # Simulate the target state
-sim_obj <- sim_state_target_suitability(sim_obj,fun = "uniform", value = 0.5)
+state_target_suitability_example <- function(sim_obj){ 
+  out <-  sim_obj@state_env*2
+  out[out>1] <- 2-out[out>1]
+  out # optimal environment is 0.5
+}
+sim_obj <- sim_state_target_suitability(sim_obj,state_target_suitability_example)
 
 #realise the state
 sim_obj <- sim_state_target_realise(sim_obj,fun = "binomial")
