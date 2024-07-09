@@ -314,21 +314,21 @@ sim_obj <- sim_effort(sim_obj,fun = "basic", n_samplers=2, n_visits = 1, n_sampl
 sim_obj@effort
 ```
 
-    ## Simple feature collection with 4 features and 8 fields
+    ## Simple feature collection with 4 features and 9 fields
     ## Geometry type: POINT
     ## Dimension:     XY
-    ## Bounding box:  xmin: 4.5 ymin: 8.5 xmax: 11.5 ymax: 13.5
+    ## Bounding box:  xmin: 16.5 ymin: 7.5 xmax: 19.5 ymax: 15.5
     ## CRS:           NA
-    ##   sampler visit unit cell_id       env target target_suitability
-    ## 1       1     1    1     492 0.3793103    env          0.7586207
-    ## 2       1     1    2     492 0.3793103    env          0.7586207
-    ## 3       2     1    1     635 0.1379310    env          0.2758621
-    ## 4       2     1    2     635 0.1379310    env          0.2758621
+    ##   sampler visit unit cell_id ID       env target target_suitability
+    ## 1       1     1    1     437  1 0.5517241    env          0.8965517
+    ## 2       1     1    2     437  2 0.5517241    env          0.8965517
+    ## 3       2     1    1     680  3 0.6551724    env          0.6896552
+    ## 4       2     1    2     680  4 0.6551724    env          0.6896552
     ##   target_realised          geometry
-    ## 1               1 POINT (11.5 13.5)
-    ## 2               1 POINT (11.5 13.5)
-    ## 3               0   POINT (4.5 8.5)
-    ## 4               0   POINT (4.5 8.5)
+    ## 1               1 POINT (16.5 15.5)
+    ## 2               1 POINT (16.5 15.5)
+    ## 3               1  POINT (19.5 7.5)
+    ## 4               1  POINT (19.5 7.5)
 
 The function for simulating effort start is `sim_effort`
 

@@ -283,7 +283,7 @@ run_simulation <- function(rep,sampling_bias_strength, n_samplers){
   #confusion matrix
   conf_matrix <- caret::confusionMatrix(
     factor(test_set$predicton_realised), 
-    factor(test_set$state_realised)
+    factor(test_set$target_realised)
     )
   
   # Extract confusion matrix metrics

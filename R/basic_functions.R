@@ -233,43 +233,20 @@ effort_basic <- function(simulation_object, n_samplers = 1, n_visits = 1, n_samp
 #' }
 #' @export
 detect_equal <- function(simulation_object, prob = 1) {
+  #get objects
+  detections <- simulation_object@effort
 
-  background <- simulation_object@background
-  state_env <- simulation_object@state_env
-  state_target <- simulation_object@state_target_realised
-  effort <- simulation_object@effort
 
-  detections_all <- data.frame()
-
-  #how many targets states are there?
-  if(length(dim(state_target))<3){
-    n_targets <- 1
-  } else {
-    n_targets <- dim(state_target)[3]
-  }
-
-  #loop through each of the targets
-  for (i in 1:n_targets) {
-    detections <- effort
-    detections$target <- i
-
-    detections$state_realised <- unname(terra::extract(state_target[[i]], effort,ID=F,raw=T))
-
-    #detect based probability value provided as argument
-    detections$detection_ability <- runif(nrow(detections)) < prob
-
-    #recorded presence/absense
-    detections$state_detected <- detections$detection_ability * detections$state_realised
-
-    #in this basic example all are identified correctly (ignore for now)
-    # detections$identified_as <- detections$target
-    # detections$identified_correct <- detections$identified_as==detections$target
-
-    detections_all <- rbind(detections_all, detections)
-  }
+  #detect based probability value provided as argument
+  detections$detection_ability <- runif(nrow(detections)) < prob
+  #recorded presence/absense
+  detections$state_detected <- detections$detection_ability * detections$target_realised
+  #in this basic example all are identified correctly (ignore for now)
+  # detections$identified_as <- detections$target
+  # detections$identified_correct <- detections$identified_as==detections$target
 
   # Update simulation_object with the new results
-  detections_all
+  detections
 }
 
 #' Report Detections Based on Reporting Probability

@@ -30,7 +30,7 @@ sim_effort <- function(simulation_object, fun, sf=NULL, ...) {
   }
 
   #get values from env, suitability, realised
-  extracted_values <- terra::extract(simulation_object@state_env,effort_sf,ID=F)
+  extracted_values <- terra::extract(simulation_object@state_env,effort_sf,ID=T)
   effort_sf[,names(extracted_values)] <- extracted_values
 
   #loop through each target

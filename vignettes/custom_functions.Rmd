@@ -1,11 +1,11 @@
 ---
-title: "More complex simulations"
+title: "Use-case: Investigating the Impact of Sampling Co-location"
 output: 
   rmarkdown::html_vignette:
     fig_width: 7
     fig_height: 6
 vignette: >
-  %\VignetteIndexEntry{More complex simulations}
+  %\VignetteIndexEntry{Use-case: Investigating the Impact of Sampling Co-location}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,7 +19,15 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-This vignette demonstrates a simulation workflow to investigate the benefits and issues of co-locating recording sites for different taxonomic groups, such as butterflies, plants, and birds. We will generate species counts/abundance data across multiple sites, simulate dependencies between species, and incorporate temporal trends. This approach helps assess whether using the same recording sites across different taxa groups is beneficial or problematic and explore optimal strategies for site co-location.
+In ecological studies, monitoring multiple species across various taxa (e.g., butterflies, plants, birds) is essential for understanding biodiversity and ecosystem health. One strategy for monitoring these species is co-location, where data collection for different taxa occurs at the same sites. This approach can have various advantages, such as cost-effectiveness and comprehensive data collection, but it may also introduce biases or limitations.
+
+This vignette demonstrates a workflow to simulate the effects of co-location on species monitoring data using the STRIDER package. We will generate species presence-absence data across a number of sites and then simulate different scenarios of co-located and non-co-located sampling. This includes:
+
+ * Generating Full Sampling Data: Creating a full dataset with species counts and environmental data across multiple sites.
+ * Simulating Co-location: Using a custom function to thin the dataset, representing different degrees of co-location for monitoring different taxa.
+ * Visualizing Co-location Effects: Plotting the distribution of species monitoring data to understand how co-location impacts data representation.
+ 
+By running these simulations, we aim to investigate the benefits and challenges of co-location, such as whether certain taxa benefit from co-located monitoring and how sampling strategies might influence the accuracy and reliability of biodiversity assessments.
 
 ## Setup
 
@@ -30,6 +38,7 @@ library(STRIDER)
 library(terra)
 library(sf)
 library(dplyr)
+library(virtualspecies)
 library(ggplot2)
 set.seed(42)
 ```
@@ -42,24 +51,33 @@ We define custom environmental variables with different spatial patterns to simu
 dim_x <- 500
 dim_y <- 500
 
+#elevation
+e_elev <- matrix(runif(dim_x * dim_y), dim_x, dim_y) |> 
+  rast() |>
+  terra::aggregate(fact = 10) |> 
+  terra::disagg(fact = 10) |> 
+  focal(15,expand=T,fun = "mean") |> 
+  focal(15,expand=T,fun = "mean") *1000
+
+#slope and aspect
+e_slope <- e_elev |> terrain()
+e_slope[is.na(e_slope)] <- mean(values(e_slope),na.rm = T)
+e_aspect <- e_elev |> terrain(v="aspect")
+e_aspect[is.na(e_aspect)] <- mean(values(e_aspect),na.rm = T)
+
+#latitudinal gradient, - elevation
+e_temperature <- 60 + terra::rast(matrix(rep(seq(from = 1, to = dim_x), times = dim_y), dim_x, dim_y))/100 - (e_elev/100)*10
+
+#latitudinal gradient, - elevation
+e_rainfall <- 20 + t(terra::rast(matrix(rep(seq(from = 1, to = dim_x), times = dim_y), dim_x, dim_y)))/100 + (e_elev/100)*10
+e_rainfall <- e_rainfall/max(values(e_rainfall))
+
+
+custom_env <- c(e_elev,e_slope,e_aspect,e_temperature,e_rainfall)
+
 # Define environmental variables with different spatial patterns
-env1 <- terra::rast(matrix(rep(seq(from = 1, to = dim_x), times = dim_y), dim_x, dim_y))
-env1 <- env1 / max(values(env1))
 
-env2 <- terra::rast(matrix(rep(seq(from = dim_x, to = 1), each = dim_y), dim_x, dim_y))
-env2 <- env2 / max(values(env2))
-
-env3 <- terra::rast(matrix(runif(dim_x * dim_y), dim_x, dim_y))
-env3 <- env3 / max(values(env3))
-
-env4 <- terra::rast(matrix(sin(seq(0, pi, length.out = dim_x)), dim_x, dim_y))
-env4 <- env4 / max(values(env4))
-
-env5 <- terra::rast(matrix(cos(seq(0, pi, length.out = dim_y)), dim_x, dim_y))
-env5 <- env5 / max(values(env5))
-
-custom_env <- c(env1, env2, env3, env4, env5)
-names(custom_env) <- c("rainfall", "temperature", "urban_density", "elevation", "aspect")
+names(custom_env) <- c("elevation", "slope", "aspect", "temperature", "rainfall")
 ```
 
 Next, we integrate these custom environmental variables into the simulation object.
@@ -72,56 +90,36 @@ sim_obj <- sim_state_env(sim_obj, spatraster = custom_env)
 
 ## Custom Suitability Functions for Multiple Species
 
-We define custom suitability functions for multiple species, each influenced differently by the environmental variables.
+We define custom suitability functions for multiple species, each influenced differently by the environmental variables. We use the `virtualspecies` package to do this.
 
 ```{r custom suitability functions}
-# Custom suitability function for multiple species
-custom_suitability_function <- function(simulation_object) {
-  # Extract environmental variables from the simulation object
-  env <- simulation_object@state_env
-  
-  # Define the suitability functions for multiple species
-  species_suitability_functions <- list(
-    butterfly = function(env) (env$rainfall * env$temperature + env$urban_density^2) / 3,
-    plant = function(env) (env$rainfall + env$temperature^2 - env$urban_density) / 3,
-    bird = function(env) (env$rainfall + env$elevation + env$aspect) / 3,
-    mammal = function(env) (env$temperature * env$elevation - env$urban_density) / 3,
-    amphibian = function(env) (env$rainfall + env$elevation^2 - env$aspect) / 3
-  )
-  
-  # Initialize an empty list to store the suitability layers
-  suitability_layers <- list()
-  
-  # Loop through each species and calculate its suitability layer
-  for (species in names(species_suitability_functions)) {
-    suitability <- species_suitability_functions[[species]](env)
-    suitability[suitability<0] <- 0
-    suitability[suitability>1] <- 1
-    names(suitability) <- species
-    suitability_layers[[species]] <- suitability
+
+# virtual species
+suitability_virtual_species <- function(simulation_object,n_targets = 1,...){
+  outs <- list()
+  for (i in 1:n_targets){
+    out <- virtualspecies::generateSpFromPCA(simulation_object@state_env,sample.points = T, nb.point = 300,plot = F,...)
+    outs[[i]] <- out$suitab.raster
   }
-  
-  # Combine all suitability layers into a single SpatRaster object
-  suitability_raster <- rast(suitability_layers)
-  
-  return(suitability_raster)
+  names(outs) <- paste0("target_",1:n_targets)
+  rast(outs)
 }
 
-sim_obj <- sim_state_target_suitability(sim_obj, fun = custom_suitability_function)
+sim_obj <- sim_state_target_suitability(sim_obj, fun = suitability_virtual_species,n_targets = 5)
 ```
 
 Realised suitability
 
-```{r}
+```{r realise}
 sim_obj <- sim_state_target_realise(sim_obj,fun="binomial")
 ```
 
 ## Custom Effort Function
 
-We create a custom effort function that simulates sampling effort using a combination of urban density and random sampling.
+We create a custom effort function that simulates sampling effort.
 
 ```{r custom effort function}
-custom_effort_function <- function(sim_obj, n_sites, n_taxa_per_site = 1) {
+custom_effort_function <- function(sim_obj, n_sites) {
   sites <- sample(cells(sim_obj@background), n_sites, replace = TRUE)
   coords <- xyFromCell(sim_obj@background, sites)
   effort_df <- data.frame(
@@ -129,10 +127,6 @@ custom_effort_function <- function(sim_obj, n_sites, n_taxa_per_site = 1) {
     y = coords[, 2]
   )
   effort_sf <- st_as_sf(effort_df, coords = c("x", "y"))
-  
-  site_taxa_combination <- expand.grid(sites = 1:n_sites,target = names(sim_obj@state_target_suitability))
-  
-  effort_sf$taxa <- sample(names(sim_obj@state_target_suitability), n_taxa_per_site)
   
   return(effort_sf)
 }
@@ -145,15 +139,120 @@ sim_obj <- sim_effort(sim_obj, fun = custom_effort_function, n_sites = 100)
 We could define custom detection and reporting functions to introduce variability in the detection and reporting probabilities, but just use the default for now.
 
 ```{r custom detection and reporting functions}
-# Simulate the detection
-sim_obj <- sim_detect(sim_obj,fun = "equal", prob = 0.5)
+#detection
+sim_obj <- sim_detect(sim_obj,fun = "equal", prob = 1)
 
 # Simulate the reporting
-sim_obj <- sim_report(sim_obj,fun = "equal", prob = 0.8, platform = "iRecord")
+sim_obj <- sim_report(sim_obj,fun = "equal", prob = 1, platform = "iRecord")
 ```
 
 ## Visualisation
 
+Visualised the simulation objects
+
 ```{r visualisation}
 plot(sim_obj)
 ```
+
+## Investigating co-location
+
+This code demonstrates how to simulate co-location of species monitoring data at various sites and visualize the distribution of targets (species) across these sites. The goal is to investigate the effects of co-locating monitoring efforts for different taxa versus individual monitoring efforts. This is achieved through a function `colocation_thinning()` that thins the data to simulate varying degrees of co-location.
+
+```{r colocation functions}
+# Export the full sampling data from the simulation object
+df <- sim_obj |> export_df()
+
+# Get the full number of samples
+nrow(df)
+
+# Function to thin rows to simulate colocation
+colocation_thinning <- function(sim_df, colocate_rate = 1, consistent_colocation = F, n_samples = 100) {
+  # Determine the number of unique targets (species) in the dataset
+  n_targets <- length(unique(sim_df$target))
+  
+  # Calculate the number of targets per site based on the colocation rate
+  targets_per_site <- round(colocate_rate * n_targets)
+  print(paste0(targets_per_site, " targets per site"))
+  
+  if (consistent_colocation) {
+    # If consistent colocation is required, sample a subset of targets to colocate
+    colocated_targets <- sample(unique(sim_df$target), targets_per_site)
+    
+    # Filter the data for the colocated targets
+    sim_df_colocated <- df |> filter(target %in% colocated_targets)
+    
+    # Randomly select a subset of sites to colocate the targets
+    sites_to_select <- unique(df$ID) |> sample(round(n_samples * colocate_rate) / targets_per_site)
+    sim_df_colocated <- sim_df_colocated |> filter(ID %in% sites_to_select)
+    
+    # Sample the remaining targets to maintain the desired sample size
+    sim_df_noncolocated <- sim_df %>%
+      filter(!(target %in% colocated_targets)) %>%
+      sample_n(round(n_samples * (1 - colocate_rate)))
+    
+    # Combine the colocated and non-colocated samples
+    sim_df <- bind_rows(sim_df_colocated, sim_df_noncolocated)
+    
+  } else {
+    # Sample a subset of targets for each site if colocation is not consistent
+    sim_df <- df |> group_by(ID) |> sample_n(targets_per_site)
+    
+    # Thin the sites to match the required number of samples
+    sites_to_select <- unique(df$ID) |> sample(round(n_samples / targets_per_site))
+    sim_df <- sim_df |> filter(ID %in% sites_to_select)
+  }
+
+  sim_df
+}
+
+plot_colocation <- function(thinned_df){
+  thinned_df |>
+    ggplot(aes(x = as.factor(ID), y = target, colour = target)) +
+    geom_point() +
+    theme_minimal() +
+    xlab("Site")
+}
+
+```
+
+### Here are some different co-location scenarios
+
+Despite different co-location, each scenario has consistent effort: 100 samples (the function default).
+
+In this scenario, all targets are sampled at every site. This represents full co-location where each monitoring site collects data on all taxa.
+
+```{r scen1}
+colocation_thinning(df, colocate_rate = 1) |> plot_colocation()
+```
+
+In this scenario, 60% of the targets are sampled at each site. The specific targets that are sampled can vary from site to site, leading to inconsistent co-location. Different sets of 3 out of 5 targets are sampled at each site.
+
+```{r scen2}
+colocation_thinning(df, colocate_rate = 0.6) |> plot_colocation()
+```
+
+Here, only 20% of the targets are sampled at each site, which means each site samples only a single taxa with no overlap. This represents minimal co-location.
+
+```{r scen3}
+colocation_thinning(df, colocate_rate = 0.2) |> plot_colocation()
+```
+
+In this scenario, 60% of the targets are consistently sampled at the same sites. The same 3 out of 5 targets are always sampled at specific sites, while the remaining 2 targets are sampled randomly. This ensures some level of consistent co-location for certain taxa.
+
+```{r scen4}
+colocation_thinning(df, colocate_rate = 0.6,consistent_colocation = T) |> plot_colocation()
+```
+
+## Data analysis
+
+The resulting data frame from each co-location scenario could be used to test various hypotheses around the advantages/disadvantages of sampling co-location.
+
+```{r scen4 data}
+colocation_thinning(df, colocate_rate = 0.6,consistent_colocation = T)
+```
+
+
+
+
+
+
