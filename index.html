@@ -35,7 +35,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/custom_functions.html">More complex simulations</a></li>
+<li><a class="dropdown-item" href="articles/custom_functions.html">Use-case: Investigating the Impact of Sampling Co-location</a></li>
     <li><a class="dropdown-item" href="articles/example_minimal.html">A minimal example</a></li>
   </ul>
 </li>
@@ -261,21 +261,21 @@
 <code class="sourceCode R"><span><span class="co"># Simulate the sampling effort</span></span>
 <span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_effort.html">sim_effort</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="st">"basic"</span>, n_samplers<span class="op">=</span><span class="fl">2</span>, n_visits <span class="op">=</span> <span class="fl">1</span>, n_sample_units <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">sim_obj</span><span class="op">@</span><span class="va">effort</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">## Simple feature collection with 4 features and 8 fields</span></span>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">## Simple feature collection with 4 features and 9 fields</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="do">## Geometry type: POINT</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="do">## Dimension:     XY</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="do">## Bounding box:  xmin: 4.5 ymin: 8.5 xmax: 11.5 ymax: 13.5</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="do">## Bounding box:  xmin: 16.5 ymin: 7.5 xmax: 19.5 ymax: 15.5</span></span>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="do">## CRS:           NA</span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="do">##   sampler visit unit cell_id       env target target_suitability</span></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="do">## 1       1     1    1     492 0.3793103    env          0.7586207</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="do">## 2       1     1    2     492 0.3793103    env          0.7586207</span></span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="do">## 3       2     1    1     635 0.1379310    env          0.2758621</span></span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="do">## 4       2     1    2     635 0.1379310    env          0.2758621</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="do">##   sampler visit unit cell_id ID       env target target_suitability</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="do">## 1       1     1    1     437  1 0.5517241    env          0.8965517</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="do">## 2       1     1    2     437  2 0.5517241    env          0.8965517</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="do">## 3       2     1    1     680  3 0.6551724    env          0.6896552</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="do">## 4       2     1    2     680  4 0.6551724    env          0.6896552</span></span>
 <span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="do">##   target_realised          geometry</span></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="do">## 1               1 POINT (11.5 13.5)</span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="do">## 2               1 POINT (11.5 13.5)</span></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="do">## 3               0   POINT (4.5 8.5)</span></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="do">## 4               0   POINT (4.5 8.5)</span></span></code></pre></div>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="do">## 1               1 POINT (16.5 15.5)</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="do">## 2               1 POINT (16.5 15.5)</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="do">## 3               1  POINT (19.5 7.5)</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="do">## 4               1  POINT (19.5 7.5)</span></span></code></pre></div>
 <p>The function for simulating effort start is <code>sim_effort</code></p>
 <p>The minimal function for this process is <code>sim_effort(fun="uniform")</code> in which effort is uniformly distributed across the landscape.</p>
 <!--`sim_effort_weighted()` can be used to sample from the target state but weighted unequally across the environment (a weighting layer is provided as a SpatRaster)-->
