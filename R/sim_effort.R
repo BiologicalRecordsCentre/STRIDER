@@ -12,18 +12,13 @@
 #' sim_effort(simulation_object, fun, ...)
 #' }
 #' @export
-sim_effort <- function(simulation_object, fun, sf=NULL, ...) {
+sim_effort <- function(simulation_object, fun=NULL, sf=NULL, ...) {
+
   simulation_object_original <- simulation_object
   simulation_object <- read_sim_obj_rasters(simulation_object)
 
   if (is.null(sf)){
-    if(is.character(fun)){
-      if(!(fun %in% c("basic"))){
-        stop("Provided function must be 'basic'")
-      }
-      fun <- get(paste0("effort_",fun))
-    }
-    # apply the function
+    check_fun(fun)
     effort_sf <- fun(simulation_object, ...)
   } else {
     effort_sf <- sf

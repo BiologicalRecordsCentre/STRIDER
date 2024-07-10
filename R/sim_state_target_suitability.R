@@ -19,25 +19,17 @@
 #'
 #' @examples
 #' \dontrun{
-#' sim_obj <- sim_state_target_suitability(sim_obj, fun = "uniform", value = 0.5)
+#' sim_obj <- sim_state_target_suitability(sim_obj, fun = state_target_suitability_uniform", value = 0.5)
 #' sim_obj <- sim_state_target_suitability(sim_obj, fun = my_custom_function)
 #' sim_obj <- sim_state_target_suitability(sim_obj, fun = my_custom_function, filename = "output.tif")
 #' }
 #'
 #' @export
 sim_state_target_suitability <- function(simulation_object,fun,filename = NULL, ...) {
+  check_fun(fun)
   simulation_object_original <- simulation_object
   simulation_object <- read_sim_obj_rasters(simulation_object)
 
-  if(is.character(fun)){
-    if(exists(fun)){
-      fun <- get(fun)
-    } else if((fun %in% c("uniform"))) {
-      fun <- get(paste0("state_target_suitability_",fun))
-    } else {
-      stop("Function not found")
-    }
-  }
 
   # apply the function
   suitability <- fun(simulation_object, ...)
