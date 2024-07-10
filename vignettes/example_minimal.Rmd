@@ -105,7 +105,7 @@ suitabiity_function <- function(sim_obj){
 sim_obj <- sim_state_target_suitability(sim_obj,fun = suitabiity_function)
 
 #realise
-sim_obj <- sim_state_target_realise(sim_obj,fun="binomial")
+sim_obj <- sim_state_target_realise(sim_obj,fun=state_target_realise_binomial)
 ```
 
 The suitability_function provided in this vignette is a simple example. In real-world applications, you might use more sophisticated models that incorporate multiple environmental variables and their interactions. The STRIDER package allows you to define and apply such custom suitability functions, making it a flexible tool for ecological modeling and simulation.
@@ -131,7 +131,7 @@ Here are a description of the arguments provided:
 
 #simulate effort, biased by urban density
 sim_obj <- sim_effort(sim_obj,
-                      fun = "basic", 
+                      fun = effort_basic, 
                       n_samplers=500, 
                       n_visits = 1, 
                       n_sample_units = 1,
@@ -145,7 +145,7 @@ Simulate detection of the target species with a 100% detection probability.
 
 ```{r detection}
 #detection 100%
-sim_obj <- sim_detect(sim_obj,fun="equal",prob = 1)
+sim_obj <- sim_detect(sim_obj,fun=detect_equal,prob = 1)
 ```
 
 ### Reporting
@@ -154,7 +154,7 @@ Simulate reporting of the detected species with a 100% reporting probability.
 
 ```{r reporting}
 #reporting 100%
-sim_obj <- sim_report(sim_obj,fun="equal",prob = 1)
+sim_obj <- sim_report(sim_obj,fun=report_equal,prob = 1)
 ```
 
 ### Plot simulation object
@@ -256,15 +256,15 @@ run_simulation <- function(rep,sampling_bias_strength, n_samplers){
   sim_obj <- SimulationObject(background = background) |>
     sim_state_env(spatraster = env) |>
     sim_state_target_suitability(fun = suitabiity_function) |>
-    sim_state_target_realise(fun="binomial") |>
-    sim_effort(fun = "basic", 
+    sim_state_target_realise(fun=state_target_realise_binomial) |>
+    sim_effort(fun = effort_basic, 
                n_samplers=n_samplers, 
                n_visits = 1,
                n_sample_units = 1,
                prob_raster = sampling_weight,
                sampling_bias_strength = sampling_bias_strength) |>
-    sim_detect(fun="equal",prob = 1) |>
-    sim_report(fun="equal",prob = 1)
+    sim_detect(fun=detect_equal,prob = 1) |>
+    sim_report(fun=report_equal,prob = 1)
   
   #fit model to sampled data
   mod1 <- 
@@ -273,7 +273,7 @@ run_simulation <- function(rep,sampling_bias_strength, n_samplers){
     fit_mod()
   
   #generate an independent test set
-  test_set <- sim_obj |> sim_effort(fun = "basic",n_samplers = 10000) |> export_df()
+  test_set <- sim_obj |> sim_effort(fun = effort_basic,n_samplers = 10000) |> export_df()
   
   # make prediction on the test set
   test_prediction <- predict(mod1, test_set,type="response")

@@ -111,7 +111,7 @@ sim_obj <- sim_state_target_suitability(sim_obj, fun = suitability_virtual_speci
 Realised suitability
 
 ```{r realise}
-sim_obj <- sim_state_target_realise(sim_obj,fun="binomial")
+sim_obj <- sim_state_target_realise(sim_obj,fun=state_target_realise_binomial)
 ```
 
 ## Custom Effort Function
@@ -140,10 +140,10 @@ We could define custom detection and reporting functions to introduce variabilit
 
 ```{r custom detection and reporting functions}
 #detection
-sim_obj <- sim_detect(sim_obj,fun = "equal", prob = 1)
+sim_obj <- sim_detect(sim_obj,fun = detect_equal, prob = 1)
 
 # Simulate the reporting
-sim_obj <- sim_report(sim_obj,fun = "equal", prob = 1, platform = "iRecord")
+sim_obj <- sim_report(sim_obj,fun = report_equal, prob = 1, platform = "iRecord")
 ```
 
 ## Visualisation
