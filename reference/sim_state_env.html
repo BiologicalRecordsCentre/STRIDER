@@ -70,7 +70,7 @@ a `background` slot and a `state_env` slot.</p></dd>
 
 
 <dt id="arg-fun">fun<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
-<dd><p>A character string specifying the name of a predefined function            (`"gradient"` or `"uniform"`) or a user-defined function.</p></dd>
+<dd><p>a user-defined function.</p></dd>
 
 
 <dt id="arg-filename">filename<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
@@ -93,7 +93,6 @@ a `background` slot and a `state_env` slot.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>- If a `spatraster` is provided, the function checks that its dimensions match
   those of the simulation object's background.
-- If `fun` is provided as a character string, it must be either `"gradient"` or `"uniform"`.
 - If `fun` is provided as a user-defined function, it will be applied to the simulation object.
 - If `filename` is provided, the resultant SpatRaster is saved, and the filename is returned.</p>
     </div>
@@ -101,11 +100,11 @@ a `background` slot and a `state_env` slot.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu">sim_state_env</span><span class="op">(</span><span class="va">sim_obj</span>, fun <span class="op">=</span> <span class="st">"uniform"</span>, value <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu">sim_state_env</span><span class="op">(</span><span class="va">sim_obj</span>, fun <span class="op">=</span> <span class="st">"gradient"</span>, from <span class="op">=</span> <span class="fl">0</span>, to <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu">sim_state_env</span><span class="op">(</span><span class="va">sim_obj</span>, fun <span class="op">=</span> <span class="va">state_env_uniform</span>, value <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu">sim_state_env</span><span class="op">(</span><span class="va">sim_obj</span>, fun <span class="op">=</span> <span class="va">state_env_gradient</span>, from <span class="op">=</span> <span class="fl">0</span>, to <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu">sim_state_env</span><span class="op">(</span><span class="va">sim_obj</span>, spatraster <span class="op">=</span> <span class="va">my_spatraster</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu">sim_state_env</span><span class="op">(</span><span class="va">sim_obj</span>, fun <span class="op">=</span> <span class="va">my_custom_function</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu">sim_state_env</span><span class="op">(</span><span class="va">sim_obj</span>, fun <span class="op">=</span> <span class="st">"uniform"</span>, filename <span class="op">=</span> <span class="st">"output.tif"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu">sim_state_env</span><span class="op">(</span><span class="va">sim_obj</span>, fun <span class="op">=</span> <span class="va">state_env_uniform</span>, filename <span class="op">=</span> <span class="st">"output.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

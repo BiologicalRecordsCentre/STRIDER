@@ -144,7 +144,7 @@
 <span><span class="va">background</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">30</span>,<span class="fl">30</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create the simulation object</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu">SimulationObject</span><span class="op">(</span>background <span class="op">=</span> <span class="va">background</span><span class="op">)</span></span>
+<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/SimulationObject.html">SimulationObject</a></span><span class="op">(</span>background <span class="op">=</span> <span class="va">background</span><span class="op">)</span></span>
 <span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_state_env.html">sim_state_env</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="va">state_env_gradient</span>,from <span class="op">=</span> <span class="fl">0</span>,to <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">sim_obj</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="do">## An object of class "SimulationObject"</span></span>
@@ -334,7 +334,7 @@
 <span><span class="va">background</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">50</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create the simulation object</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu">SimulationObject</span><span class="op">(</span>background <span class="op">=</span> <span class="va">background</span><span class="op">)</span></span>
+<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/SimulationObject.html">SimulationObject</a></span><span class="op">(</span>background <span class="op">=</span> <span class="va">background</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Simulate the environment state</span></span>
 <span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_state_env.html">sim_state_env</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="va">state_env_gradient</span>,from <span class="op">=</span> <span class="fl">0</span>,to <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>

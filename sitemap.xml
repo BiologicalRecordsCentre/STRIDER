@@ -5,10 +5,12 @@
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/articles/use_case_colocation.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/authors.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/index.html</loc></url>
+<url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/SimulationObject.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/detect_equal.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/effort_basic.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/export_df.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/index.html</loc></url>
+<url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/plot-SimulationObject-ANY-method.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/report_equal.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/sim_detect.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/sim_effort.html</loc></url>
@@ -21,6 +23,5 @@
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/state_target_realise_binomial.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/state_target_realise_threshold.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/state_target_suitability_uniform.html</loc></url>
-<url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/state_target_suitability_virtsp.html</loc></url>
 </urlset>
 

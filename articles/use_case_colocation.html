@@ -161,7 +161,7 @@ patterns to simulate realistic scenarios.</p>
 simulation object.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">background</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">dim_x</span>, <span class="va">dim_y</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu">SimulationObject</span><span class="op">(</span>background <span class="op">=</span> <span class="va">background</span><span class="op">)</span></span>
+<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SimulationObject.html">SimulationObject</a></span><span class="op">(</span>background <span class="op">=</span> <span class="va">background</span><span class="op">)</span></span>
 <span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_state_env.html">sim_state_env</a></span><span class="op">(</span><span class="va">sim_obj</span>, spatraster <span class="op">=</span> <span class="va">custom_env</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -211,7 +211,7 @@ influenced differently by the environmental variables. We use the
 <span><span class="co">#&gt;                   To disable, set argument rescale = FALSE</span></span></code></pre></div>
 <p>Realised suitability</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_state_target_realise.html">sim_state_target_realise</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun<span class="op">=</span><span class="st">"binomial"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_state_target_realise.html">sim_state_target_realise</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun<span class="op">=</span><span class="va">state_target_realise_binomial</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="custom-effort-function">Custom Effort Function<a class="anchor" aria-label="anchor" href="#custom-effort-function"></a>
@@ -241,10 +241,10 @@ variability in the detection and reporting probabilities, but just use
 the default for now.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#detection</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_detect.html">sim_detect</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="st">"equal"</span>, prob <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_detect.html">sim_detect</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="va">detect_equal</span>, prob <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Simulate the reporting</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_report.html">sim_report</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="st">"equal"</span>, prob <span class="op">=</span> <span class="fl">1</span>, platform <span class="op">=</span> <span class="st">"iRecord"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_report.html">sim_report</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="va">report_equal</span>, prob <span class="op">=</span> <span class="fl">1</span>, platform <span class="op">=</span> <span class="st">"iRecord"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="visualisation">Visualisation<a class="anchor" aria-label="anchor" href="#visualisation"></a>
