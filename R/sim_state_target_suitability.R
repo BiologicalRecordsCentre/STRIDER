@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' sim_obj <- sim_state_target_suitability(sim_obj, fun = state_target_suitability_uniform", value = 0.5)
+#' sim_obj <- sim_state_target_suitability(sim_obj, fun = state_target_suitability_uniform, value = 0.5)
 #' sim_obj <- sim_state_target_suitability(sim_obj, fun = my_custom_function)
 #' sim_obj <- sim_state_target_suitability(sim_obj, fun = my_custom_function, filename = "output.tif")
 #' }

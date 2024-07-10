@@ -10,7 +10,8 @@ effort_basic(
   n_visits = 1,
   n_sample_units = 1,
   replace = FALSE,
-  prob_raster = NULL
+  prob_raster = NULL,
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ effort_basic(
 \item{replace}{A logical value indicating whether sampling with replacement is allowed. Default is FALSE.}
 
 \item{prob_raster}{A SpatRaster providing the probability of sampling each cell. Default is NULL.}
+
+\item{...}{Any other arguments to function}
 }
 \value{
 An sf object containing the sampling effort points.
