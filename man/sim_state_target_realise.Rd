@@ -9,7 +9,7 @@ sim_state_target_realise(simulation_object, fun, filename = NULL, ...)
 \arguments{
 \item{simulation_object}{A SimulationObject containing the state environment.}
 
-\item{fun}{Either 'binomial' or 'threshold' to use the included functions, or a custom function that takes a SimulationObject with an environment slot and outputs a target suitability SpatRaster indicating either presence/absence or abundance.}
+\item{fun}{A custom function that takes a SimulationObject with an environment slot and outputs a target suitability SpatRaster indicating either presence/absence or abundance.}
 
 \item{filename}{A character string specifying the filename to save the resultant SpatRaster. If `NULL`, the SpatRaster is not saved to a file. Default is `NULL`.}
 
@@ -24,14 +24,13 @@ binary (presence/absence) or abundance using a predefined or a custom function.
 The updated simulation object with the new state target realization and metadata is returned.
 }
 \details{
-- If `fun` is provided as 'binomial' or 'threshold', the corresponding included function is used.
 - If `fun` is a custom function, it will be applied to the simulation object.
 - If `filename` is provided, the resultant SpatRaster is saved, and the filename is returned.
 }
 \examples{
 \dontrun{
-sim_obj <- sim_state_target_realise(sim_obj, fun = "binomial")
-sim_obj <- sim_state_target_realise(sim_obj, fun = "threshold", threshold = 0.5)
+sim_obj <- sim_state_target_realise(sim_obj, fun = state_target_realise_binomial)
+sim_obj <- sim_state_target_realise(sim_obj, fun = state_target_realise_threshold, threshold = 0.5)
 sim_obj <- sim_state_target_realise(sim_obj, fun = my_custom_function)
 sim_obj <- sim_state_target_realise(sim_obj, fun = my_custom_function, filename = "output.tif")
 }

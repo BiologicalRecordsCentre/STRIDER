@@ -4,7 +4,7 @@
 \alias{sim_effort}
 \title{Defines effort using a built-in function, a custom function, or sf POINTS}
 \usage{
-sim_effort(simulation_object, fun, sf = NULL, ...)
+sim_effort(simulation_object, fun = NULL, sf = NULL, ...)
 }
 \arguments{
 \item{simulation_object}{A SimulationObject containing simulation data.}

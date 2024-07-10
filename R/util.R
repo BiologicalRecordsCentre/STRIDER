@@ -100,3 +100,10 @@ hash_sim_obj <- function(sim_obj){
 export_df <- function(sim_obj){
   sim_obj@report
 }
+
+
+check_fun <- function(fun){
+  if(!is.function(fun)){
+    stop("Argument fun must be a function")
+  }
+}

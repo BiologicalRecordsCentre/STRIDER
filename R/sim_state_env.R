@@ -7,7 +7,7 @@
 #'
 #' @param simulation_object An object representing the simulation. The object should contain
 #'                          a `background` slot and a `state_env` slot.
-#' @param fun A character string specifying the name of a predefined function            (`"gradient"` or `"uniform"`) or a user-defined function.
+#' @param fun a user-defined function.
 #' @param filename A character string specifying the filename to save the resultant SpatRaster. If `NULL`, the SpatRaster is not saved to a file.
 #' @param spatraster A `SpatRaster` object to be used directly as the state environment. If provided, it overrides the `fun` parameter.
 #' @param ... Additional arguments to be passed to the function specified in `fun`.
@@ -17,21 +17,21 @@
 #' @details
 #' - If a `spatraster` is provided, the function checks that its dimensions match
 #'   those of the simulation object's background.
-#' - If `fun` is provided as a character string, it must be either `"gradient"` or `"uniform"`.
 #' - If `fun` is provided as a user-defined function, it will be applied to the simulation object.
 #' - If `filename` is provided, the resultant SpatRaster is saved, and the filename is returned.
 #'
 #' @examples
 #' \dontrun{
-#' sim_obj <- sim_state_env(sim_obj, fun = "uniform", value = 0.5)
-#' sim_obj <- sim_state_env(sim_obj, fun = "gradient", from = 0, to = 1)
+#' sim_obj <- sim_state_env(sim_obj, fun = state_env_uniform, value = 0.5)
+#' sim_obj <- sim_state_env(sim_obj, fun = state_env_gradient, from = 0, to = 1)
 #' sim_obj <- sim_state_env(sim_obj, spatraster = my_spatraster)
 #' sim_obj <- sim_state_env(sim_obj, fun = my_custom_function)
-#' sim_obj <- sim_state_env(sim_obj, fun = "uniform", filename = "output.tif")
+#' sim_obj <- sim_state_env(sim_obj, fun = state_env_uniform, filename = "output.tif")
 #' }
 #'
 #' @export
 sim_state_env <- function(simulation_object, fun= NULL, filename = NULL, spatraster=NULL, ...) {
+
 
   #load in rasters but create a copy with the original version
   simulation_object_original <- simulation_object
@@ -54,16 +54,8 @@ sim_state_env <- function(simulation_object, fun= NULL, filename = NULL, spatras
     }
 
   # OR if a function has been defined
-  } else if (is.character(fun)){
-    if(!(fun %in% c("gradient","uniform"))){
-      stop("Provided function must either be 'gradient' or 'uniform'")
-    }
-
-    fun_got <- get(paste0("state_env_",fun))
-    spatraster <- fun_got(simulation_object,...)
-
-  # or finally if user has provided a function
   } else {
+    check_fun(fun)
     spatraster <- fun(simulation_object,...)
   }
 
