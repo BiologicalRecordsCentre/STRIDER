@@ -67,7 +67,6 @@ The `simulation_object` includes the following components:
 - `@state_target_realised`: Simulated state of the target (as a realised absolute/binary value)
 - `@effort`: Simulated sampling effort
 - `@detect`: Simulated detection information
-- `@report`: Simulated reporting information
 
 You can access and manipulate the `simulation_object` at each step to generate the outputs of the corresponding processes. The outputs at each step are `terra` SpatRasters or `sf` feature collections (POINT), as shown in the figure above. You can use custom R scripts to generate the outputs of any of the steps, ensuring flexibility and interoperability.
 
@@ -78,7 +77,6 @@ The functions used at each stage are as follows:
  * `sim_state_target_realise(simulation_object, ...)`
  * `sim_effort(simulation_object, ...)`
  * `sim_detect(simulation_object, ...)`
- * `sim_report(simulation_object, ...)`
  
 You could use the `targets` R package to create reproducible workflows for simulating your data.
 
@@ -188,10 +186,6 @@ The function for simulating effort start is `sim_effort`
  
 The minimal function for this process is `sim_effort(fun="uniform")` in which effort is uniformly distributed across the landscape.
 
-<!--`sim_effort_weighted()` can be used to sample from the target state but weighted unequally across the environment (a weighting layer is provided as a SpatRaster)-->
-
-<!--`sim_effort_byod()` can be used to bring your own data and sample but using specified locations-->
-
 ## Simulating identification/detection
 
 In STRIDER, "detection" refers to the process of whether the applied effort identifies and records the presence of a target within the specified visit. It describes the interaction between realised target state and effort, but may also be influenced by environmental state. Detection can be influenced by various factors such as the sampling methodology, the proficiency of the observer, the environmental conditions, and the characteristics of the target species.
@@ -233,45 +227,3 @@ sim_obj <- sim_state_target_suitability(sim_obj, fun = suit_fun)
 ```
 
 This function must take the SimulationObject as its first argument. This means you've got access to all other simulation components. Therefore, if for example you wanted to your detection process to depend on the environment then you'd simply need to access it via the correct slot.
-
-## A complete minimal example
-
-Here is an example which runs through a very simple example and plots the output. 
-
-```{r example}
-rm(sim_obj)
-library(STRIDER)
-library(terra)
-library(sf)
-
-# Create the background
-background <- terra::rast(matrix(0,50,50))
-
-# Create the simulation object
-sim_obj <- SimulationObject(background = background)
-
-# Simulate the environment state
-sim_obj <- sim_state_env(sim_obj,fun = state_env_gradient,from = 0,to = 1)
-
-# Simulate the target state
-state_target_suitability_example <- function(sim_obj){ 
-  out <-  sim_obj@state_env*2
-  out[out>1] <- 2-out[out>1]
-  out # optimal environment is 0.5
-}
-sim_obj <- sim_state_target_suitability(sim_obj,state_target_suitability_example)
-
-#realise the state
-sim_obj <- sim_state_target_realise(sim_obj,fun = state_target_realise_binomial)
-
-# Simulate the sampling effort
-sim_obj <- sim_effort(sim_obj,fun = effort_basic, n_visits = 100, replace = FALSE)
-
-# Simulate the detection
-sim_obj <- sim_detect(sim_obj,fun = detect_equal, prob = 0.5)
-
-# Simulate the reporting
-sim_obj <- sim_report(sim_obj,fun = report_equal, prob = 0.8, platform = "iRecord")
-
-plot(sim_obj) 
-```

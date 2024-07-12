@@ -77,7 +77,6 @@ The `simulation_object` includes the following components:
   absolute/binary value)
 - `@effort`: Simulated sampling effort
 - `@detect`: Simulated detection information
-- `@report`: Simulated reporting information
 
 You can access and manipulate the `simulation_object` at each step to
 generate the outputs of the corresponding processes. The outputs at each
@@ -92,7 +91,6 @@ The functions used at each stage are as follows:
 - `sim_state_target_realise(simulation_object, ...)`
 - `sim_effort(simulation_object, ...)`
 - `sim_detect(simulation_object, ...)`
-- `sim_report(simulation_object, ...)`
 
 You could use the `targets` R package to create reproducible workflows
 for simulating your data.
@@ -225,9 +223,9 @@ time step, then aggregate later.
 
 The function for simulating environmental state is `sim_state_env`
 
-The minimal version of this function is `sim_state_env(fun="uniform")`
-which produces a simulation object with a single layer which is uniform
-in value in space.
+The minimal version of this function is
+`sim_state_env(fun=state_env_uniform)` which produces a simulation
+object with a single layer which is uniform in value in space.
 
 The BYOD (Bring Your Own Data) function is
 `sim_state_env(spatraster = [your_raster])` where you can provide a
@@ -255,10 +253,10 @@ The function for simulating target state is
 `sim_state_target_suitability`
 
 The minimal version of this function is
-`sim_state_target_suitability(fun="uniform")` which produces a uniform
-abundance across space.
+`sim_state_target_suitability(fun=state_target_suitability_uniform)`
+which produces a uniform abundance across space.
 
-The BYOD function is `sim_state_target(fun=[your custom functio])`
+The BYOD function is `sim_state_target(fun=[your custom function])`
 meaning you could also use other packages to generate a target state
 (eg.rangeshiftR, virtualspecies) then convert the output to a
 `SpatRaster`.
@@ -310,33 +308,25 @@ target present).
 
 ``` r
 # Simulate the sampling effort
-sim_obj <- sim_effort(sim_obj,fun = "basic", n_samplers=2, n_visits = 1, n_sample_units = 2)
+sim_obj <- sim_effort(sim_obj,fun = effort_basic, n_samplers=2, n_visits = 1, n_sample_units = 2)
 sim_obj@effort
 ```
 
-    ## Simple feature collection with 4 features and 9 fields
+    ## Simple feature collection with 4 features and 4 fields
     ## Geometry type: POINT
     ## Dimension:     XY
-    ## Bounding box:  xmin: 16.5 ymin: 7.5 xmax: 19.5 ymax: 15.5
+    ## Bounding box:  xmin: 7.5 ymin: 6.5 xmax: 15.5 ymax: 15.5
     ## CRS:           NA
-    ##   sampler visit unit cell_id ID       env target target_suitability
-    ## 1       1     1    1     437  1 0.5517241    env          0.8965517
-    ## 2       1     1    2     437  2 0.5517241    env          0.8965517
-    ## 3       2     1    1     680  3 0.6551724    env          0.6896552
-    ## 4       2     1    2     680  4 0.6551724    env          0.6896552
-    ##   target_realised          geometry
-    ## 1               1 POINT (16.5 15.5)
-    ## 2               1 POINT (16.5 15.5)
-    ## 3               1  POINT (19.5 7.5)
-    ## 4               1  POINT (19.5 7.5)
+    ##   sampler visit unit cell_id         geometry
+    ## 1       1     1    1     706 POINT (15.5 6.5)
+    ## 2       1     1    2     706 POINT (15.5 6.5)
+    ## 3       2     1    1     428 POINT (7.5 15.5)
+    ## 4       2     1    2     428 POINT (7.5 15.5)
 
 The function for simulating effort start is `sim_effort`
 
 The minimal function for this process is `sim_effort(fun="uniform")` in
 which effort is uniformly distributed across the landscape.
-
-<!--`sim_effort_weighted()` can be used to sample from the target state but weighted unequally across the environment (a weighting layer is provided as a SpatRaster)-->
-<!--`sim_effort_byod()` can be used to bring your own data and sample but using specified locations-->
 
 ## Simulating identification/detection
 
@@ -354,8 +344,8 @@ step involves correctly identifying the observed organism to the
 appropriate taxonomic group or species. Samplers may not always identify
 a target correctly and these functions may take confusion matrices.
 
-The minimal function for this process is `sim_detect(fun="equal")` in
-which all targets are detected at equal probability.
+The minimal function for this process is `sim_detect(fun=detect_equal)`
+in which all targets are detected at equal probability.
 
 ## Simulating the reporting
 
@@ -372,8 +362,8 @@ example:
 - Only interesting or novel species are reported (eg. as a result of
   life listing)
 
-The minimal function for this process is `sim_report(fun="equal")` in
-which all data is reported at equal probability.
+The minimal function for this process is `sim_report(fun=report_equal)`
+in which all data is reported at equal probability.
 
 ## Custom functions
 
@@ -404,48 +394,3 @@ This function must take the SimulationObject as its first argument. This
 means you’ve got access to all other simulation components. Therefore,
 if for example you wanted to your detection process to depend on the
 environment then you’d simply need to access it via the correct slot.
-
-## A complete minimal example
-
-Here is an example which runs through a very simple example and plots
-the output.
-
-``` r
-rm(sim_obj)
-library(STRIDER)
-library(terra)
-library(sf)
-
-# Create the background
-background <- terra::rast(matrix(0,50,50))
-
-# Create the simulation object
-sim_obj <- SimulationObject(background = background)
-
-# Simulate the environment state
-sim_obj <- sim_state_env(sim_obj,fun = state_env_gradient,from = 0,to = 1)
-
-# Simulate the target state
-state_target_suitability_example <- function(sim_obj){ 
-  out <-  sim_obj@state_env*2
-  out[out>1] <- 2-out[out>1]
-  out # optimal environment is 0.5
-}
-sim_obj <- sim_state_target_suitability(sim_obj,state_target_suitability_example)
-
-#realise the state
-sim_obj <- sim_state_target_realise(sim_obj,fun = "binomial")
-
-# Simulate the sampling effort
-sim_obj <- sim_effort(sim_obj,fun = "basic", n_visits = 100, replace = FALSE)
-
-# Simulate the detection
-sim_obj <- sim_detect(sim_obj,fun = "equal", prob = 0.5)
-
-# Simulate the reporting
-sim_obj <- sim_report(sim_obj,fun = "equal", prob = 0.8, platform = "iRecord")
-
-plot(sim_obj) 
-```
-
-![](man/figures/example-1.png)<!-- -->![](man/figures/example-2.png)<!-- -->![](man/figures/example-3.png)<!-- -->![](man/figures/example-4.png)<!-- -->![](man/figures/example-5.png)<!-- -->![](man/figures/example-6.png)<!-- -->

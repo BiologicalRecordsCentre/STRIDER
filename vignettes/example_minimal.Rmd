@@ -145,16 +145,7 @@ Simulate detection of the target species with a 100% detection probability.
 
 ```{r detection}
 #detection 100%
-sim_obj <- sim_detect(sim_obj,fun=detect_equal,prob = 1)
-```
-
-### Reporting
-
-Simulate reporting of the detected species with a 100% reporting probability.
-
-```{r reporting}
-#reporting 100%
-sim_obj <- sim_report(sim_obj,fun=report_equal,prob = 1)
+sim_obj <- sim_detect(sim_obj)
 ```
 
 ### Plot simulation object
@@ -173,7 +164,7 @@ Make a "biological recording" dataset with presence-only dataset (`po`) and a pr
 ```{r analysis}
 df <- export_df(sim_obj)
 data_pa <- df #presence absense
-data_po <- df[df$state_detected==1,] #presense only
+data_po <- df[df$target_detected==1,] #presense only
 ```
 
 Generate some background samples to aid model fitting
@@ -182,7 +173,7 @@ Generate some background samples to aid model fitting
 po_background <- effort_basic(sim_obj,100) |>
   extract(x=sim_obj@state_env,xy=T) |>
   st_as_sf(coords=c("x","y")) |>
-  mutate(state_detected=0)
+  mutate(target_detected=0)
 
 data_po <- bind_rows(data_po,po_background)
 
@@ -192,7 +183,7 @@ Combine dataset and fit models
 
 ```{r fit_mod}
 fit_mod <- function(df){
-  glm(state_detected~rainfall + temperature, data = df, family = binomial(link = "logit"))
+  glm(target_detected~rainfall + temperature, data = df, family = binomial(link = "logit"))
 }
 
 threshold = 0.5
@@ -263,8 +254,7 @@ run_simulation <- function(rep,sampling_bias_strength, n_samplers){
                n_sample_units = 1,
                prob_raster = sampling_weight,
                sampling_bias_strength = sampling_bias_strength) |>
-    sim_detect(fun=detect_equal,prob = 1) |>
-    sim_report(fun=report_equal,prob = 1)
+    sim_detect() 
   
   #fit model to sampled data
   mod1 <- 

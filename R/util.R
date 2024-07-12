@@ -98,7 +98,7 @@ hash_sim_obj <- function(sim_obj){
 #' }
 #' @export
 export_df <- function(sim_obj){
-  sim_obj@report
+  sim_obj@detect
 }
 
 

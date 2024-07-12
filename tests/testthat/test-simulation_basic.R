@@ -22,10 +22,7 @@ sim_state_target_realise(sim_obj, fun = state_target_realise_binomial)
 sim_obj <- sim_effort(sim_obj,fun=effort_basic, n_samplers = 2, n_visits = 3, n_sample_units=2, replace = FALSE)
 
 # 4 Simulate detection within the simulation object
-sim_obj <- sim_detect(sim_obj,fun=detect_equal, prob = 0.5)
-
-# 5 Simulate reporting within the simulation object
-sim_obj <- sim_report(sim_obj, fun=report_equal, prob = 0.8, platform = "iRecord")
+sim_obj <- sim_detect(sim_obj)
 
 #1
 test_that("Test creating a uniform environment", {
@@ -54,8 +51,4 @@ test_that("Simulating detection", {
   expect_identical(class(sim_obj@detect), c("sf","data.frame"))
 })
 
-#5
-test_that("Simulating reporting", {
-  expect_identical(class(sim_obj@report), c("sf","data.frame"))
-})
 
