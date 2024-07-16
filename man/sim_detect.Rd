@@ -2,25 +2,18 @@
 % Please edit documentation in R/sim_detect.R
 \name{sim_detect}
 \alias{sim_detect}
-\title{Defines detection using a custom function}
+\title{Simulate Detection Process}
 \usage{
-sim_detect(simulation_object, fun, ...)
+sim_detect(simulation_object, realised_extract_fun = mean)
 }
 \arguments{
-\item{simulation_object}{a SimulationObject}
+\item{simulation_object}{A `SimulationObject` that contains the state of the environment, target, effort, and other relevant simulation information.}
 
-\item{fun}{a function that takes the simulation object and returns a simulation object with  data in detection slot}
-
-\item{...}{other parameters for the user supplied function fun}
+\item{realised_extract_fun}{A function to extract the realised state used in \code{\link[=sim_extract]{sim_extract()}}. The default is `mean`.}
 }
 \value{
-A SimulationObject with a detection
+A `SimulationObject` with the detection information added.
 }
 \description{
-Defines detection using a custom function
-}
-\examples{
-\dontrun{
-sim_effort_fun(simulation_object, fun, ...)
-}
+This function simulates the detection process in a biodiversity study using a specified function to extract the realised state.
 }

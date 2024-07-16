@@ -94,13 +94,7 @@ setMethod("plot", "SimulationObject", function(x) {
 
   if(!is.null(x@detect)){
     plot(x@background, main="@detect",legend = F,col = "white")
-    plot(x@detect[x@detect$state_detected>0,c("geometry","state_detected")],col = "blue",add=T,pch=19)
-    plot(x@detect[x@detect$state_detected==0,c("geometry","state_detected")],col = "red",pch = 4,add=T)
-  }
-
-  if(!is.null(x@report)){
-    plot(x@background, main="@report",legend = F,col = "white")
-    plot(x@report[x@report$reported==T,c("geometry")],col = "blue",add=T,pch=19)
-    plot(x@detect[x@report$reported==F,c("geometry")],col = "red",pch = 4,add=T)
+    plot(x@detect[x@detect$target_detected>0,c("geometry","target_detected")],col = "blue",add=T,pch=19)
+    plot(x@detect[x@detect$target_detected==0,c("geometry","target_detected")],col = "red",pch = 4,add=T)
   }
 })
