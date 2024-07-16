@@ -15,7 +15,8 @@ Suggests:
     dplyr,
     ggplot2,
     caret,
-    virtualspecies
+    virtualspecies,
+    ibis.iSDM
 VignetteBuilder: knitr
 RoxygenNote: 7.3.2
 Imports:

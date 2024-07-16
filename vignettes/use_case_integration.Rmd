@@ -33,7 +33,9 @@ library(ggplot2)
 
 ```{r}
 # Create the background
-background <- terra::rast(matrix(0, 50, 50))
+background <- terra::rast(nrows=100, ncols=100, nlyrs=1, xmin=-1.5, xmax=0, 
+          ymin=53, ymax=54,crs = "epsg:4326")
+values(background) <- 0
 
 # Create the simulation object
 sim_obj <- SimulationObject(background = background)
@@ -45,6 +47,7 @@ sim_obj <- sim_state_env(sim_obj, fun = state_env_gradient, from = 0, to = 1)
 state_target_suitability_example <- function(sim_obj){ 
   out <- sim_obj@state_env * 2
   out[out > 1] <- 2 - out[out > 1]
+  out <- out/2
   names(out) <- "frog"
   out # optimal environment is 0.5
 }
@@ -65,7 +68,7 @@ In the following R code, we simulate the effort and data extraction process for 
 
 ```{r}
 sim_obj_cit_sci <- 
-  sim_effort(sim_obj,effort_basic,n_samplers = 10,n_visits = 10) |> 
+  sim_effort(sim_obj,effort_basic,n_samplers = 30,n_visits = 10) |> 
   sim_detect()
 
 plot(sim_obj_cit_sci)
@@ -126,11 +129,11 @@ sim_effort_transect <- function(sim_obj, n_transects, n_transect_points, transec
 }
 
 sim_obj_transect <- 
-  sim_effort(sim_obj,sim_effort_transect,n_transects = 20,n_transect_points = 2,transect_length = 10) |>
+  sim_effort(sim_obj,sim_effort_transect,n_transects = 40,n_transect_points = 2,transect_length =0.1) |>
   sim_detect(realised_extract_fun = max)
 
 plot(sim_obj_transect)
-sim_obj_transect@effort
+
 ```
 
 ## Sampling Method 3: Sites
@@ -179,9 +182,40 @@ sim_effort_polygons <- function(sim_obj, n_polygons, polygon_size) {
 }
 
 sim_obj_polygons <- 
-  sim_effort(sim_obj,sim_effort_polygons,n_polygons = 20,polygon_size = 3) |> 
+  sim_effort(sim_obj,sim_effort_polygons,n_polygons = 30,polygon_size = 0.05) |> 
   sim_detect(realised_extract_fun = max)
 
 plot(sim_obj_polygons)
 
 ```
+
+## Data integration
+
+Here we attempt to do some data integration using the R package ibis.iSDM
+
+This doesn't work for some reason
+
+```{r, eval =FALSE}
+#https://github.com/iiasa/ibis.iSDM
+#remotes::install_github("IIASA/ibis.iSDM")
+library(ibis.iSDM)
+
+test_data <- sim_obj_cit_sci@detect
+
+mod <- distribution(sim_obj@background) |>
+  add_predictors(env = sim_obj@state_env,
+                 transform = "scale", 
+                 derivates = "none") |>
+  add_biodiversity_poipa(test_data,
+                       name = "Citizen sci data",
+                       field_occurrence = "target_detected") |>
+  engine_glm() |>
+  train(runname =  "test_run",
+        verbose = T,
+        aggregate_observations = F)
+  
+
+
+```
+
+
