@@ -3,6 +3,7 @@
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/articles/example_minimal.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/articles/index.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/articles/use_case_colocation.html</loc></url>
+<url><loc>https://biologicalrecordscentre.github.io/STRIDER/articles/use_case_integration.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/authors.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/index.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/SimulationObject.html</loc></url>
@@ -14,7 +15,7 @@
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/report_equal.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/sim_detect.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/sim_effort.html</loc></url>
-<url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/sim_report.html</loc></url>
+<url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/sim_extract.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/sim_state_env.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/sim_state_target_realise.html</loc></url>
 <url><loc>https://biologicalrecordscentre.github.io/STRIDER/reference/sim_state_target_suitability.html</loc></url>

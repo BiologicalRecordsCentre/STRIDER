@@ -35,6 +35,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/example_minimal.html">A minimal example</a></li>
     <li><a class="dropdown-item" href="../articles/use_case_colocation.html">Use-case: Investigating the Impact of Sampling Co-location</a></li>
+    <li><a class="dropdown-item" href="../articles/use_case_integration.html">Use-case: Data Integration</a></li>
   </ul>
 </li>
       </ul>
@@ -245,26 +246,17 @@ higher urban density.</li>
 probability.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#detection 100%</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_detect.html">sim_detect</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun<span class="op">=</span><span class="va">detect_equal</span>,prob <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="reporting">Reporting<a class="anchor" aria-label="anchor" href="#reporting"></a>
-</h3>
-<p>Simulate reporting of the detected species with a 100% reporting
-probability.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#reporting 100%</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_report.html">sim_report</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun<span class="op">=</span><span class="va">report_equal</span>,prob <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_detect.html">sim_detect</a></span><span class="op">(</span><span class="va">sim_obj</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="plot-simulation-object">Plot simulation object<a class="anchor" aria-label="anchor" href="#plot-simulation-object"></a>
 </h3>
 <p>Finally, we visualize the components of the simulation object using
 the custom <code><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot()</a></code> function.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#visualise the simulation object's components</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sim_obj</span><span class="op">)</span></span></code></pre></div>
-<p><img src="example_minimal_files/figure-html/plot_sim_obj-1.png" width="700"><img src="example_minimal_files/figure-html/plot_sim_obj-2.png" width="700"><img src="example_minimal_files/figure-html/plot_sim_obj-3.png" width="700"><img src="example_minimal_files/figure-html/plot_sim_obj-4.png" width="700"><img src="example_minimal_files/figure-html/plot_sim_obj-5.png" width="700"><img src="example_minimal_files/figure-html/plot_sim_obj-6.png" width="700"></p>
+<p><img src="example_minimal_files/figure-html/plot_sim_obj-1.png" width="700"><img src="example_minimal_files/figure-html/plot_sim_obj-2.png" width="700"><img src="example_minimal_files/figure-html/plot_sim_obj-3.png" width="700"><img src="example_minimal_files/figure-html/plot_sim_obj-4.png" width="700"><img src="example_minimal_files/figure-html/plot_sim_obj-5.png" width="700"></p>
 </div>
 </div>
 <div class="section level2">
@@ -272,22 +264,22 @@ the custom <code><a href="https://rspatial.github.io/terra/reference/plot.html" 
 </h2>
 <p>Make a “biological recording” dataset with presence-only dataset
 (<code>po</code>) and a presence-absence dataset (<code>pa</code>)</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/export_df.html">export_df</a></span><span class="op">(</span><span class="va">sim_obj</span><span class="op">)</span></span>
 <span><span class="va">data_pa</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="co">#presence absense</span></span>
-<span><span class="va">data_po</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="va">df</span><span class="op">$</span><span class="va">state_detected</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span> <span class="co">#presense only</span></span></code></pre></div>
+<span><span class="va">data_po</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="va">df</span><span class="op">$</span><span class="va">target_detected</span><span class="op">==</span><span class="fl">1</span>,<span class="op">]</span> <span class="co">#presense only</span></span></code></pre></div>
 <p>Generate some background samples to aid model fitting</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">po_background</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/effort_basic.html">effort_basic</a></span><span class="op">(</span><span class="va">sim_obj</span>,<span class="fl">100</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rspatial.github.io/terra/reference/extract.html" class="external-link">extract</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">sim_obj</span><span class="op">@</span><span class="va">state_env</span>,xy<span class="op">=</span><span class="cn">T</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span>coords<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>,<span class="st">"y"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>state_detected<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>target_detected<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data_po</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_po</span>,<span class="va">po_background</span><span class="op">)</span></span></code></pre></div>
 <p>Combine dataset and fit models</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_mod</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">state_detected</span><span class="op">~</span><span class="va">rainfall</span> <span class="op">+</span> <span class="va">temperature</span>, data <span class="op">=</span> <span class="va">df</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">target_detected</span><span class="op">~</span><span class="va">rainfall</span> <span class="op">+</span> <span class="va">temperature</span>, data <span class="op">=</span> <span class="va">df</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="va">threshold</span> <span class="op">=</span> <span class="fl">0.5</span></span>
@@ -317,7 +309,7 @@ results.</p>
 <p>We start with the predefined objects: background, env, and
 suitability_function. These objects were defined in the earlier sections
 of this vignette.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#use pre-defined objects</span></span>
 <span><span class="va">background</span></span>
 <span><span class="co">#&gt; class       : SpatRaster </span></span>
@@ -354,7 +346,7 @@ of this vignette.</p>
 sampling weight raster based on a given proportion. This function takes
 the urban_density layer from the environmental state and modifies its
 values to create varying levels of sampling bias:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#define a new function to adjust the sampling weight raster, takes values 0 to 1</span></span>
 <span><span class="va">adjust_towards_average</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">proportion</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">avg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/summarize-generics.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
@@ -387,7 +379,7 @@ fitted model.</li>
 precision, recall, and F1 score, based on the confusion matrix.</li>
 <li>Return Results: Output the results as a data frame.</li>
 </ol>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Here we define a function which has the full simulation pipeline chained together but with the arguments you wish to change as function arguments</span></span>
 <span><span class="co"># Here my factors I'm interested in are the sampling bias strength and the number of samplers</span></span>
 <span><span class="va">run_simulation</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rep</span>,<span class="va">sampling_bias_strength</span>, <span class="va">n_samplers</span><span class="op">)</span><span class="op">{</span></span>
@@ -404,8 +396,7 @@ precision, recall, and F1 score, based on the confusion matrix.</li>
 <span>               n_sample_units <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>               prob_raster <span class="op">=</span> <span class="va">sampling_weight</span>,</span>
 <span>               sampling_bias_strength <span class="op">=</span> <span class="va">sampling_bias_strength</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="../reference/sim_detect.html">sim_detect</a></span><span class="op">(</span>fun<span class="op">=</span><span class="va">detect_equal</span>,prob <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="../reference/sim_report.html">sim_report</a></span><span class="op">(</span>fun<span class="op">=</span><span class="va">report_equal</span>,prob <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="../reference/sim_detect.html">sim_detect</a></span><span class="op">(</span><span class="op">)</span> </span>
 <span>  </span>
 <span>  <span class="co">#fit model to sampled data</span></span>
 <span>  <span class="va">mod1</span> <span class="op">&lt;-</span> </span>
@@ -461,7 +452,7 @@ precision, recall, and F1 score, based on the confusion matrix.</li>
 <span></span>
 <span><span class="co">#estimated run time</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Estimated run time: "</span>,<span class="fu"><a href="https://rspatial.github.io/terra/reference/math-generics.html" class="external-link">round</a></span><span class="op">(</span><span class="va">single_run_time</span><span class="op">*</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">simulation_parameters</span><span class="op">)</span><span class="op">)</span>,<span class="st">" seconds"</span> <span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Estimated run time: 31 seconds"</span></span>
+<span><span class="co">#&gt; [1] "Estimated run time: 22 seconds"</span></span>
 <span></span>
 <span><span class="co">#do the simulation for the required parameters and combine the rows into a data frame</span></span>
 <span><span class="va">sim_outputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">simulation_parameters</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">row</span><span class="op">)</span> <span class="op">{</span></span>
@@ -483,7 +474,7 @@ and model reliability.</p>
 <p>The code below creates a visualization to show how the F1 score of a
 model is influenced by the number of samples and the strength of
 sampling bias:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#visualise how f1 score is impacted by the number of samples and the strength of the sampling bias</span></span>
 <span><span class="va">sim_outputs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_samplers</span><span class="op">+</span><span class="va">sampling_bias_strength</span><span class="op">*</span><span class="fl">20</span><span class="op">-</span><span class="fl">10</span> ,</span>
 <span>                           y <span class="op">=</span> <span class="va">f1_score</span>,</span>

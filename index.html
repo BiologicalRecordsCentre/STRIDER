@@ -37,6 +37,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/example_minimal.html">A minimal example</a></li>
     <li><a class="dropdown-item" href="articles/use_case_colocation.html">Use-case: Investigating the Impact of Sampling Co-location</a></li>
+    <li><a class="dropdown-item" href="articles/use_case_integration.html">Use-case: Data Integration</a></li>
   </ul>
 </li>
       </ul>
@@ -112,8 +113,6 @@
 <code>@effort</code>: Simulated sampling effort</li>
 <li>
 <code>@detect</code>: Simulated detection information</li>
-<li>
-<code>@report</code>: Simulated reporting information</li>
 </ul>
 <p>You can access and manipulate the <code>simulation_object</code> at each step to generate the outputs of the corresponding processes. The outputs at each step are <code>terra</code> SpatRasters or <code>sf</code> feature collections (POINT), as shown in the figure above. You can use custom R scripts to generate the outputs of any of the steps, ensuring flexibility and interoperability.</p>
 <p>The functions used at each stage are as follows:</p>
@@ -123,7 +122,6 @@
 <li><code>sim_state_target_realise(simulation_object, ...)</code></li>
 <li><code>sim_effort(simulation_object, ...)</code></li>
 <li><code>sim_detect(simulation_object, ...)</code></li>
-<li><code>sim_report(simulation_object, ...)</code></li>
 </ul>
 <p>You could use the <code>targets</code> R package to create reproducible workflows for simulating your data.</p>
 </div>
@@ -212,7 +210,7 @@
 </ul>
 <p>The output of this stage is a SpatRaster with layers for each environmental variable. There is currently no way to capture non-gridded spatial features such as lines or polygons but you could derive grid-based approximations of it. This works well for time invariant environmental variables. If you need time variant environmental variables then the best current implementation is to create a simulation object for each time step, sample from each time step, sample from each time step, then aggregate later.</p>
 <p>The function for simulating environmental state is <code>sim_state_env</code></p>
-<p>The minimal version of this function is <code>sim_state_env(fun="uniform")</code> which produces a simulation object with a single layer which is uniform in value in space.</p>
+<p>The minimal version of this function is <code>sim_state_env(fun=state_env_uniform)</code> which produces a simulation object with a single layer which is uniform in value in space.</p>
 <p>The BYOD (Bring Your Own Data) function is <code>sim_state_env(spatraster = [your_raster])</code> where you can provide a SpatRaster with custom environmental state that meets you needs and it will be added to the correct slot.</p>
 </div>
 <div class="section level3">
@@ -222,8 +220,8 @@
 <p><img src="reference/figures/realisation_diagram-1.png"><!-- --><img src="reference/figures/realisation_diagram-2.png"><!-- --><img src="reference/figures/realisation_diagram-3.png"><!-- --></p>
 <p>Both of these representations of state are represented in the simulation object as SpatRaster with layers for each target. Again, if you want the target to change over time then create a list of rasters where each list item represents the target state at each time step, but this will need some wrangling.</p>
 <p>The function for simulating target state is <code>sim_state_target_suitability</code></p>
-<p>The minimal version of this function is <code>sim_state_target_suitability(fun="uniform")</code> which produces a uniform abundance across space.</p>
-<p>The BYOD function is <code>sim_state_target(fun=[your custom functio])</code> meaning you could also use other packages to generate a target state (eg.rangeshiftR, virtualspecies) then convert the output to a <code>SpatRaster</code>.</p>
+<p>The minimal version of this function is <code>sim_state_target_suitability(fun=state_target_suitability_uniform)</code> which produces a uniform abundance across space.</p>
+<p>The BYOD function is <code>sim_state_target(fun=[your custom function])</code> meaning you could also use other packages to generate a target state (eg.rangeshiftR, virtualspecies) then convert the output to a <code>SpatRaster</code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -259,34 +257,27 @@
 <p>Here’s a very basic example where we generate effort comprising of two samplers, each making one visit, and within each visit they use two sampling units (meaning they had two opportunities to observe each target present).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Simulate the sampling effort</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_effort.html">sim_effort</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="st">"basic"</span>, n_samplers<span class="op">=</span><span class="fl">2</span>, n_visits <span class="op">=</span> <span class="fl">1</span>, n_sample_units <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_effort.html">sim_effort</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="va">effort_basic</span>, n_samplers<span class="op">=</span><span class="fl">2</span>, n_visits <span class="op">=</span> <span class="fl">1</span>, n_sample_units <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">sim_obj</span><span class="op">@</span><span class="va">effort</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">## Simple feature collection with 4 features and 9 fields</span></span>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">## Simple feature collection with 4 features and 4 fields</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="do">## Geometry type: POINT</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="do">## Dimension:     XY</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="do">## Bounding box:  xmin: 16.5 ymin: 7.5 xmax: 19.5 ymax: 15.5</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="do">## Bounding box:  xmin: 7.5 ymin: 6.5 xmax: 15.5 ymax: 15.5</span></span>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="do">## CRS:           NA</span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="do">##   sampler visit unit cell_id ID       env target target_suitability</span></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="do">## 1       1     1    1     437  1 0.5517241    env          0.8965517</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="do">## 2       1     1    2     437  2 0.5517241    env          0.8965517</span></span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="do">## 3       2     1    1     680  3 0.6551724    env          0.6896552</span></span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="do">## 4       2     1    2     680  4 0.6551724    env          0.6896552</span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="do">##   target_realised          geometry</span></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="do">## 1               1 POINT (16.5 15.5)</span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="do">## 2               1 POINT (16.5 15.5)</span></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="do">## 3               1  POINT (19.5 7.5)</span></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="do">## 4               1  POINT (19.5 7.5)</span></span></code></pre></div>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="do">##   sampler visit unit cell_id         geometry</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="do">## 1       1     1    1     706 POINT (15.5 6.5)</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="do">## 2       1     1    2     706 POINT (15.5 6.5)</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="do">## 3       2     1    1     428 POINT (7.5 15.5)</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="do">## 4       2     1    2     428 POINT (7.5 15.5)</span></span></code></pre></div>
 <p>The function for simulating effort start is <code>sim_effort</code></p>
 <p>The minimal function for this process is <code>sim_effort(fun="uniform")</code> in which effort is uniformly distributed across the landscape.</p>
-<!--`sim_effort_weighted()` can be used to sample from the target state but weighted unequally across the environment (a weighting layer is provided as a SpatRaster)-->
-<!--`sim_effort_byod()` can be used to bring your own data and sample but using specified locations-->
 </div>
 <div class="section level2">
 <h2 id="simulating-identificationdetection">Simulating identification/detection<a class="anchor" aria-label="anchor" href="#simulating-identificationdetection"></a>
 </h2>
 <p>In STRIDER, “detection” refers to the process of whether the applied effort identifies and records the presence of a target within the specified visit. It describes the interaction between realised target state and effort, but may also be influenced by environmental state. Detection can be influenced by various factors such as the sampling methodology, the proficiency of the observer, the environmental conditions, and the characteristics of the target species.</p>
 <p>Given detection, “identification” refers to the accurate recognition and categorization of a species during the data collection process. This step involves correctly identifying the observed organism to the appropriate taxonomic group or species. Samplers may not always identify a target correctly and these functions may take confusion matrices.</p>
-<p>The minimal function for this process is <code>sim_detect(fun="equal")</code> in which all targets are detected at equal probability.</p>
+<p>The minimal function for this process is <code>sim_detect(fun=detect_equal)</code> in which all targets are detected at equal probability.</p>
 </div>
 <div class="section level2">
 <h2 id="simulating-the-reporting">Simulating the reporting<a class="anchor" aria-label="anchor" href="#simulating-the-reporting"></a>
@@ -298,7 +289,7 @@
 <li>Aggregating to a coarser spatial resolution</li>
 <li>Only interesting or novel species are reported (eg. as a result of life listing)</li>
 </ul>
-<p>The minimal function for this process is <code>sim_report(fun="equal")</code> in which all data is reported at equal probability.</p>
+<p>The minimal function for this process is <code>sim_report(fun=report_equal)</code> in which all data is reported at equal probability.</p>
 </div>
 <div class="section level2">
 <h2 id="custom-functions">Custom functions<a class="anchor" aria-label="anchor" href="#custom-functions"></a>
@@ -319,48 +310,6 @@
 <span></span>
 <span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_state_target_suitability.html">sim_state_target_suitability</a></span><span class="op">(</span><span class="va">sim_obj</span>, fun <span class="op">=</span> <span class="va">suit_fun</span><span class="op">)</span></span></code></pre></div>
 <p>This function must take the SimulationObject as its first argument. This means you’ve got access to all other simulation components. Therefore, if for example you wanted to your detection process to depend on the environment then you’d simply need to access it via the correct slot.</p>
-</div>
-<div class="section level2">
-<h2 id="a-complete-minimal-example">A complete minimal example<a class="anchor" aria-label="anchor" href="#a-complete-minimal-example"></a>
-</h2>
-<p>Here is an example which runs through a very simple example and plots the output.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">sim_obj</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://biologicalrecordscentre.github.io/STRIDER/">STRIDER</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Create the background</span></span>
-<span><span class="va">background</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">50</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Create the simulation object</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/SimulationObject.html">SimulationObject</a></span><span class="op">(</span>background <span class="op">=</span> <span class="va">background</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Simulate the environment state</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_state_env.html">sim_state_env</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="va">state_env_gradient</span>,from <span class="op">=</span> <span class="fl">0</span>,to <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Simulate the target state</span></span>
-<span><span class="va">state_target_suitability_example</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">sim_obj</span><span class="op">)</span><span class="op">{</span> </span>
-<span>  <span class="va">out</span> <span class="op">&lt;-</span>  <span class="va">sim_obj</span><span class="op">@</span><span class="va">state_env</span><span class="op">*</span><span class="fl">2</span></span>
-<span>  <span class="va">out</span><span class="op">[</span><span class="va">out</span><span class="op">&gt;</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">-</span><span class="va">out</span><span class="op">[</span><span class="va">out</span><span class="op">&gt;</span><span class="fl">1</span><span class="op">]</span></span>
-<span>  <span class="va">out</span> <span class="co"># optimal environment is 0.5</span></span>
-<span><span class="op">}</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_state_target_suitability.html">sim_state_target_suitability</a></span><span class="op">(</span><span class="va">sim_obj</span>,<span class="va">state_target_suitability_example</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">#realise the state</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_state_target_realise.html">sim_state_target_realise</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Simulate the sampling effort</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_effort.html">sim_effort</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="st">"basic"</span>, n_visits <span class="op">=</span> <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Simulate the detection</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_detect.html">sim_detect</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="st">"equal"</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Simulate the reporting</span></span>
-<span><span class="va">sim_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sim_report.html">sim_report</a></span><span class="op">(</span><span class="va">sim_obj</span>,fun <span class="op">=</span> <span class="st">"equal"</span>, prob <span class="op">=</span> <span class="fl">0.8</span>, platform <span class="op">=</span> <span class="st">"iRecord"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sim_obj</span><span class="op">)</span> </span></code></pre></div>
-<p><img src="reference/figures/example-1.png"><!-- --><img src="reference/figures/example-2.png"><!-- --><img src="reference/figures/example-3.png"><!-- --><img src="reference/figures/example-4.png"><!-- --><img src="reference/figures/example-5.png"><!-- --><img src="reference/figures/example-6.png"><!-- --></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
